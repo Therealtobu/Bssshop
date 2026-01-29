@@ -9,110 +9,48 @@
 </head>
 <body>
     <nav class="navbar">
-        <div class="container nav-inner">
-            <div class="logo" onclick="window.location.href='index.html'">GENSAISHOP</div>
-            <div class="menu-toggle" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></div>
-            <div class="mobile-menu" id="mainMenu"></div>
-        </div>
+        <div class="container nav-inner"><div class="logo" onclick="window.location.href='index.html'">GENSAISHOP</div><div class="menu-toggle" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></div><div class="mobile-menu" id="mainMenu"></div></div>
     </nav>
-
     <div class="container">
         <div style="margin-top:20px">
             <h3 style="margin-bottom:20px; font-size: 18px">Trung Tâm Giao Dịch</h3>
-            
             <div class="history-switcher">
-                <div id="btn-buy" class="switch-btn active" onclick="showHistory('buy')">
-                    <i class="fa-solid fa-bag-shopping switch-icon"></i>
-                    ĐƠN MUA HÀNG
-                </div>
-                <div id="btn-dep" class="switch-btn" onclick="showHistory('dep')">
-                    <i class="fa-solid fa-wallet switch-icon"></i>
-                    LỊCH SỬ NẠP
-                </div>
+                <div id="btn-buy" class="switch-btn active" onclick="showHistory('buy')"><i class="fa-solid fa-bag-shopping switch-icon"></i>ĐƠN MUA HÀNG</div>
+                <div id="btn-dep" class="switch-btn" onclick="showHistory('dep')"><i class="fa-solid fa-wallet switch-icon"></i>LỊCH SỬ NẠP</div>
             </div>
-
             <div id="buy-section" class="table-wrapper">
                 <h4 style="margin-bottom:15px">Danh sách vật phẩm đã mua</h4>
-                <table>
-                    <thead>
-                        <tr><th>Mã</th><th>Vật Phẩm</th><th>Giá</th><th>TT</th></tr>
-                    </thead>
-                    <tbody id="buy-list"></tbody>
-                </table>
+                <table><thead><tr><th>Mã</th><th>Vật Phẩm</th><th>Giá</th><th>TT</th></tr></thead><tbody id="buy-list"></tbody></table>
                 <p id="buy-empty" style="text-align:center; padding:20px; color:#999; display:none; font-size:13px">Chưa mua gì cả.</p>
             </div>
-
             <div id="dep-section" class="table-wrapper" style="display:none">
                 <h4 style="margin-bottom:15px">Lịch sử nạp tiền</h4>
-                <table>
-                    <thead>
-                        <tr><th>Mã</th><th>Phương thức</th><th>Số tiền</th><th>TT</th></tr>
-                    </thead>
-                    <tbody id="dep-list"></tbody>
-                </table>
+                <table><thead><tr><th>Mã</th><th>Phương thức</th><th>Số tiền</th><th>TT</th></tr></thead><tbody id="dep-list"></tbody></table>
                 <p id="dep-empty" style="text-align:center; padding:20px; color:#999; display:none; font-size:13px">Chưa nạp lần nào.</p>
             </div>
-            
-            <p style="font-size:11px; color:#888; margin-top:10px; text-align:center; font-style:italic">
-                <i class="fa-solid fa-arrow-left"></i> Vuốt bảng để xem thêm <i class="fa-solid fa-arrow-right"></i>
-            </p>
+            <p style="font-size:11px; color:#888; margin-top:10px; text-align:center; font-style:italic"><i class="fa-solid fa-arrow-left"></i> Vuốt bảng để xem thêm <i class="fa-solid fa-arrow-right"></i></p>
         </div>
     </div>
-
     <script>
         if(!localStorage.getItem('isLoggedIn')) window.location.href = 'login.html';
-
-        // MENU LOGIC
         const uName = localStorage.getItem('myUser');
         const menuBox = document.getElementById('mainMenu');
         menuBox.innerHTML = `<div style="padding:10px; font-size:12px; color:#888; border-bottom:1px solid #eee">Acc: <b>${uName}</b></div><a href="index.html" class="menu-item">Trang chủ</a><a href="dashboard.html" class="menu-item">Shop</a><a href="deposit.html" class="menu-item">Nạp Tiền</a><a href="history.html" class="menu-item">Lịch Sử</a><a href="#" onclick="doLogout()" class="menu-item logout">Đăng xuất</a>`;
         function toggleMenu() { menuBox.classList.toggle('active'); }
         function doLogout() { localStorage.removeItem('isLoggedIn'); window.location.href = 'index.html'; }
-
-        // --- LOGIC CHUYỂN TAB & LOAD DATA ---
-        
-        // Load dữ liệu
         const buyHistory = JSON.parse(localStorage.getItem('myHistory')) || [];
         const depHistory = JSON.parse(localStorage.getItem('myDepositHistory')) || [];
-
-        // Render Bảng Mua
         const buyList = document.getElementById('buy-list');
         if(buyHistory.length === 0) document.getElementById('buy-empty').style.display = 'block';
-        buyHistory.forEach(h => {
-            let shortName = h.service.length > 15 ? h.service.substring(0, 15) + '...' : h.service;
-            buyList.innerHTML += `<tr>
-                <td><b style="color:#333">${h.id}</b></td>
-                <td><b>${shortName}</b><br><span style="font-size:10px; color:#666">${h.date}</span></td>
-                <td style="color:red; font-weight:bold">-${(h.price/1000)}k</td>
-                <td><span class="status pending">${h.status}</span></td>
-            </tr>`;
-        });
-
-        // Render Bảng Nạp
+        buyHistory.forEach(h => { let shortName = h.service.length > 15 ? h.service.substring(0, 15) + '...' : h.service; buyList.innerHTML += `<tr><td><b style="color:#333">${h.id}</b></td><td><b>${shortName}</b><br><span style="font-size:10px; color:#666">${h.date}</span></td><td style="color:red; font-weight:bold">-${(h.price/1000)}k</td><td><span class="status pending">${h.status}</span></td></tr>`; });
         const depList = document.getElementById('dep-list');
         if(depHistory.length === 0) document.getElementById('dep-empty').style.display = 'block';
-        depHistory.forEach(d => {
-            depList.innerHTML += `<tr>
-                <td>${d.id}</td>
-                <td>${d.method}<br><span style="font-size:10px; color:#666">${d.date}</span></td>
-                <td style="color:green; font-weight:bold">+${(d.amount/1000)}k</td>
-                <td><span class="status" style="background:#ecfdf5; color:#059669">Thành công</span></td>
-            </tr>`;
-        });
-
-        // Hàm chuyển Tab
+        depHistory.forEach(d => { depList.innerHTML += `<tr><td>${d.id}</td><td>${d.method}<br><span style="font-size:10px; color:#666">${d.date}</span></td><td style="color:green; font-weight:bold">+${(d.amount/1000)}k</td><td><span class="status" style="background:#ecfdf5; color:#059669">Thành công</span></td></tr>`; });
         function showHistory(type) {
-            if(type === 'buy') {
-                document.getElementById('buy-section').style.display = 'block';
-                document.getElementById('dep-section').style.display = 'none';
-                document.getElementById('btn-buy').classList.add('active');
-                document.getElementById('btn-dep').classList.remove('active');
-            } else {
-                document.getElementById('buy-section').style.display = 'none';
-                document.getElementById('dep-section').style.display = 'block';
-                document.getElementById('btn-buy').classList.remove('active');
-                document.getElementById('btn-dep').classList.add('active');
-            }
+            document.getElementById('buy-section').style.display = type === 'buy' ? 'block' : 'none';
+            document.getElementById('dep-section').style.display = type === 'dep' ? 'block' : 'none';
+            document.getElementById('btn-buy').classList.toggle('active', type === 'buy');
+            document.getElementById('btn-dep').classList.toggle('active', type === 'dep');
         }
     </script>
 </body>
