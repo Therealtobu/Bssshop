@@ -4,17 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Admin Panel - GENSAISHOP</title>
-    <link rel="stylesheet" href="../style.css"> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .admin-card { background: #000; color: #fff; padding: 25px; border-radius: 20px; margin-bottom: 20px; }
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
         .stat-item { background: #222; padding: 15px; border-radius: 12px; text-align: center; }
         .stat-value { display: block; font-size: 20px; font-weight: 800; color: #22c55e; }
         .stat-label { font-size: 11px; color: #aaa; text-transform: uppercase; }
-        .order-card { background: #fff; border: 1px solid #eee; padding: 15px; border-radius: 15px; margin-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.02); }
-        .acc-box { background: #f8fafc; padding: 10px; border-radius: 10px; margin: 10px 0; font-family: monospace; font-size: 13px; border-left: 4px solid #000; }
+        .order-card { background: #fff; border: 1px solid #eee; padding: 15px; border-radius: 15px; margin-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); animation: pageEntrance 0.4s ease; }
+        .acc-box { background: #f8fafc; padding: 12px; border-radius: 10px; margin: 10px 0; font-family: 'Courier New', Courier, monospace; font-size: 14px; border-left: 4px solid #000; }
         .btn-group { display: flex; gap: 10px; margin-top: 10px; }
-        .btn-status { flex: 1; padding: 10px; border-radius: 8px; border: none; font-weight: bold; font-size: 12px; cursor: pointer; color: #fff; }
+        .btn-status { flex: 1; padding: 12px; border-radius: 8px; border: none; font-weight: bold; font-size: 12px; cursor: pointer; color: #fff; transition: 0.2s; }
+        .btn-status:active { transform: scale(0.95); }
     </style>
 </head>
 <body>
@@ -34,62 +36,56 @@
         </div>
     </nav>
 
-    <div class="container" style="animation: pageEntrance 0.6s ease;">
+    <div class="container">
         <div class="admin-card">
-            <span style="font-size: 12px; color: #888;">HỆ THỐNG QUẢN TRỊ</span>
-            <h2 style="margin-top: 5px;">Dashboard</h2>
+            <span style="font-size: 12px; color: #888;">QUẢN LÝ CỬA HÀNG</span>
+            <h2 style="margin-top: 5px;">Thống Kê Đơn</h2>
             <div class="stats-grid">
                 <div class="stat-item">
-                    <span class="stat-label">Tổng doanh thu</span>
+                    <span class="stat-label">Doanh thu</span>
                     <span id="totalRevenue" class="stat-value">0đ</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-label">Đơn chờ xử lý</span>
+                    <span class="stat-label">Đang chờ</span>
                     <span id="pendingCount" class="stat-value" style="color: #ef4444;">0</span>
                 </div>
             </div>
         </div>
 
         <div class="history-switcher">
-            <div id="tab-active" class="switch-btn active" onclick="setTab('active')">ĐƠN MỚI</div>
-            <div id="tab-done" class="switch-btn" onclick="setTab('done')">ĐÃ XONG</div>
+            <div id="tab-active" class="switch-btn active" onclick="setTab('active')">ĐƠN CẦN LÀM</div>
+            <div id="tab-done" class="switch-btn" onclick="setTab('done')">LỊCH SỬ XONG</div>
         </div>
 
-        <div id="orderList">
-            </div>
+        <div id="orderList"></div>
     </div>
 
     <script>
-        // MENU LOGIC
         const menuBox = document.getElementById('mainMenu');
-        menuBox.innerHTML = `<a href="../index.html" class="menu-item">Về Trang Chủ</a><a href="#" onclick="location.reload()" class="menu-item">Làm mới dữ liệu</a>`;
+        menuBox.innerHTML = `<a href="../index.html" class="menu-item">Trang Chủ Khách</a><a href="#" onclick="location.reload()" class="menu-item">Làm Mới</a>`;
         function toggleMenu() { menuBox.classList.toggle('active'); }
 
-        // ENGINE XỬ LÝ DỮ LIỆU
         let currentTab = 'active';
 
         function loadAdminEngine() {
             const allOrders = JSON.parse(localStorage.getItem('myHistory')) || [];
             const container = document.getElementById('orderList');
             container.innerHTML = '';
-
-            let revenue = 0;
-            let pending = 0;
+            let revenue = 0; let pending = 0;
 
             allOrders.forEach((order, index) => {
-                // Tính toán doanh thu từ những đơn thành công
                 if (order.status === 'Thành công') revenue += order.price;
-                if (order.status === 'Chờ xử lý') pending++;
+                if (order.status === 'Chờ xử lý' || order.status === 'Đang xử lý') pending++;
 
-                // Phân loại tab
-                const isPending = order.status === 'Chờ xử lý' || order.status === 'Đang xử lý';
-                if ((currentTab === 'active' && isPending) || (currentTab === 'done' && !isPending)) {
+                const isShowingPending = order.status === 'Chờ xử lý' || order.status === 'Đang xử lý';
+                if ((currentTab === 'active' && isShowingPending) || (currentTab === 'done' && !isShowingPending)) {
                     renderOrderCard(order, index, container);
                 }
             });
 
             document.getElementById('totalRevenue').innerText = revenue.toLocaleString() + 'đ';
             document.getElementById('pendingCount').innerText = pending;
+            if(container.innerHTML === '') container.innerHTML = '<p style="text-align:center; padding:30px; color:#999">Không có dữ liệu.</p>';
         }
 
         function renderOrderCard(order, index, container) {
@@ -98,19 +94,22 @@
             div.innerHTML = `
                 <div style="display:flex; justify-content:space-between; align-items:start;">
                     <div>
-                        <b style="font-size:15px;">${order.service}</b><br>
-                        <span style="font-size:11px; color:#888;">Mã: ${order.id} | ${order.date}</span>
+                        <b style="font-size:15px; color: #000;">${order.service}</b><br>
+                        <span style="font-size:11px; color:#888;">ID: ${order.id} | ${order.date}</span>
                     </div>
                     <span class="status pending" style="background:${order.status==='Thành công'?'#ecfdf5':'#fff7ed'}; color:${order.status==='Thành công'?'#059669':'#c2410c'}">${order.status}</span>
                 </div>
+                
                 <div class="acc-box">
-                    User: <b>${order.acc}</b><br>
-                    Pass: <b>(Vào LocalStorage để xem)</b> </div>
+                    User: <b style="color: #3b82f6;">${order.acc}</b><br>
+                    Pass: <b style="color: #ef4444;">${order.pass || 'Chưa nhập'}</b>
+                </div>
+
                 ${(order.status !== 'Thành công' && order.status !== 'Bị hủy') ? `
                     <div class="btn-group">
-                        <button class="btn-status" style="background:#3b82f6;" onclick="changeStatus(${index}, 'Đang xử lý')">Nhận</button>
-                        <button class="btn-status" style="background:#22c55e;" onclick="changeStatus(${index}, 'Thành công')">Xong</button>
-                        <button class="btn-status" style="background:#ef4444;" onclick="changeStatus(${index}, 'Bị hủy')">Hủy</button>
+                        <button class="btn-status" style="background:#3b82f6;" onclick="changeStatus(${index}, 'Đang xử lý')">NHẬN</button>
+                        <button class="btn-status" style="background:#22c55e;" onclick="changeStatus(${index}, 'Thành công')">XONG</button>
+                        <button class="btn-status" style="background:#ef4444;" onclick="changeStatus(${index}, 'Bị hủy')">HỦY</button>
                     </div>
                 ` : ''}
             `;
@@ -131,7 +130,6 @@
             loadAdminEngine();
         }
 
-        // Chạy Engine
         loadAdminEngine();
     </script>
 </body>
