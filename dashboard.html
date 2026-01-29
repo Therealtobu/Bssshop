@@ -3,73 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Mua Dịch Vụ</title>
+    <title>Dashboard</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <nav class="navbar">
         <div class="container nav-inner">
             <div class="logo">ROBLOX HUB</div>
-            <div style="display: flex; align-items: center; gap: 15px;">
-                <div style="background: #f0f0f0; padding: 8px 15px; border-radius: 50px; font-weight: bold;">
-                    Số dư: <span style="color: green;">50.000đ</span>
-                </div>
-                <button onclick="document.getElementById('modalNap').style.display='flex'" class="btn-nav" style="cursor: pointer;">
-                    + Nạp Tiền
-                </button>
-                <a href="index.html" style="font-size: 12px; color: red;">Đăng xuất</a>
+            <div class="nav-menu">
+                <a href="dashboard.html" class="active">Dịch Vụ</a>
+                <a href="deposit.html">Nạp Tiền</a>
+                <a href="history.html">Lịch Sử</a>
+                <a href="#" onclick="logout()" class="btn-logout">Thoát</a>
             </div>
         </div>
     </nav>
 
     <div class="container">
-        <h2 style="margin-top: 30px;">Danh sách Dịch vụ</h2>
-        
+        <div style="margin-top:20px; display:flex; justify-content:space-between; align-items:center">
+            <h3>Xin chào, <span id="uName" style="color:blue">...</span></h3>
+            <div style="background:white; padding:8px 15px; border-radius:50px; border:1px solid #ddd">
+                Số dư: <b id="uBal" style="color:green">0</b> đ
+            </div>
+        </div>
+
         <div class="grid">
             <div class="card">
-                <img src="https://placehold.co/300x200/111/fff?text=Blox+Fruit" alt="SP">
+                <img src="https://placehold.co/300x200/222/fff?text=Blox+Fruit" alt="SP">
                 <div class="card-body">
                     <h3>Cày Thuê Blox Fruit</h3>
                     <div class="price">20.000đ</div>
-                    <button class="btn-buy" onclick="alert('Mua thành công!')">MUA NGAY</button>
+                    <button class="btn-buy" onclick="openModal('Cày Blox Fruit', 20000)">MUA NGAY</button>
                 </div>
             </div>
-            
             <div class="card">
-                <img src="https://placehold.co/300x200/0044aa/fff?text=Robux" alt="SP">
+                <img src="https://placehold.co/300x200/0044aa/fff?text=400+Robux" alt="SP">
                 <div class="card-body">
                     <h3>Nạp 400 Robux</h3>
                     <div class="price">50.000đ</div>
-                    <button class="btn-buy" onclick="alert('Mua thành công!')">MUA NGAY</button>
-                </div>
-            </div>
-
-            <div class="card">
-                <img src="https://placehold.co/300x200/eab308/fff?text=Bee+Swarm" alt="SP">
-                <div class="card-body">
-                    <h3>Cày Bee Swarm</h3>
-                    <div class="price">100.000đ</div>
-                    <button class="btn-buy" onclick="alert('Mua thành công!')">MUA NGAY</button>
+                    <button class="btn-buy" onclick="openModal('400 Robux', 50000)">MUA NGAY</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="modalNap" class="modal">
+    <div id="buyModal" class="modal">
         <div class="modal-content">
-            <h3 style="margin-bottom: 20px;">Nạp Tiền Tài Khoản</h3>
-            <div style="background: #f9f9f9; padding: 15px; border-radius: 10px; margin-bottom: 15px;">
-                <p><b>MB BANK:</b> 0123 456 789</p>
-                <p><b>Nội dung:</b> NAP USER123</p>
+            <h3 style="margin-bottom:15px">Xác nhận mua</h3>
+            <p>Dịch vụ: <b id="mName">...</b></p>
+            <p style="margin-bottom:15px">Giá: <b id="mPrice" style="color:red">...</b></p>
+            
+            <label style="font-size:13px; font-weight:bold">Tài khoản Roblox:</label>
+            <input type="text" id="accUser" class="input-box" placeholder="Username...">
+            
+            <label style="font-size:13px; font-weight:bold">Mật khẩu Roblox:</label>
+            <input type="password" id="accPass" class="input-box" placeholder="Password...">
+            
+            <div style="font-size:12px; color:red; margin-bottom:15px; background:#fff2f2; padding:5px">
+                ⚠️ Vui lòng TẮT 2-STEP verification.
             </div>
-            <select class="input-field">
-                <option>Chuyển khoản (Auto)</option>
-                <option>Thẻ cào</option>
-            </select>
-            <button class="btn-submit" onclick="alert('Đã tạo lệnh nạp!'); document.getElementById('modalNap').style.display='none'">Xác nhận</button>
-            <button onclick="document.getElementById('modalNap').style.display='none'" style="width:100%; padding:10px; margin-top:10px; background:white; border:none; cursor:pointer">Đóng</button>
+
+            <button class="btn-primary" style="width:100%" onclick="processOrder()">THANH TOÁN</button>
+            <button onclick="closeModal()" style="width:100%; background:none; border:none; margin-top:10px; cursor:pointer">Hủy bỏ</button>
         </div>
     </div>
 
+    <script>
+        if(!localStorage.getItem('isLoggedIn')) window.location.href = 'login.html';
+        
+        let user = localStorage.getItem('myUser');
+        let balance = parseInt(localStorage.getItem('myBalance'));
+        document.getElementById('uName').innerText = user;
+        document.getElementById('uBal').innerText = balance.toLocaleString();
+
+        let currentItem = {};
+
+        function openModal(name, price) {
+            currentItem = { name, price };
+            document.getElementById('mName').innerText = name;
+            document.getElementById('mPrice').innerText = price.toLocaleString() + 'đ';
+            document.getElementById('buyModal').style.display = 'flex';
+        }
+
+        function closeModal() { document.getElementById('buyModal').style.display = 'none'; }
+
+        function processOrder() {
+            let acc = document.getElementById('accUser').value;
+            let pass = document.getElementById('accPass').value;
+            if(!acc || !pass) return alert("Vui lòng nhập Acc/Pass game!");
+
+            if(balance >= currentItem.price) {
+                // 1. Trừ tiền
+                balance -= currentItem.price;
+                localStorage.setItem('myBalance', balance);
+                
+                // 2. Lưu vào lịch sử
+                let history = JSON.parse(localStorage.getItem('myHistory')) || [];
+                let newOrder = {
+                    id: '#' + Math.floor(Math.random() * 99999),
+                    service: currentItem.name,
+                    price: currentItem.price,
+                    acc: acc,
+                    date: new Date().toLocaleDateString(),
+                    status: 'Chờ xử lý'
+                };
+                history.unshift(newOrder); // Thêm vào đầu
+                localStorage.setItem('myHistory', JSON.stringify(history));
+
+                alert("Mua thành công!");
+                window.location.href = "history.html"; // Chuyển sang xem lịch sử ngay
+            } else {
+                alert("Số dư không đủ! Vui lòng nạp thêm.");
+            }
+        }
+        function logout() { localStorage.removeItem('isLoggedIn'); window.location.href = 'index.html'; }
+    </script>
 </body>
 </html>
