@@ -17,42 +17,29 @@
     </nav>
 
     <div class="container">
-        <div class="auth-box" style="max-width:600px; margin-top:30px">
-            <h3 style="text-align:center; margin-bottom:25px; text-transform:uppercase; letter-spacing:1px">Nạp Số Dư</h3>
+        <div class="auth-box" style="max-width:600px; margin-top:20px">
+            <h3 style="margin-bottom:20px; text-align:center">Nạp Tiền</h3>
             
             <div class="tab-header">
-                <div id="tab1" class="tab-btn active" onclick="switchTab('bank')">CHUYỂN KHOẢN</div>
-                <div id="tab2" class="tab-btn" onclick="switchTab('card')">THẺ CÀO</div>
+                <div id="tab1" class="tab-btn active" onclick="switchTab('bank')">Bank (Auto)</div>
+                <div id="tab2" class="tab-btn" onclick="switchTab('card')">Thẻ Cào</div>
             </div>
 
             <div id="bank-area">
-                <div style="background:#f8fafc; padding:20px; border-radius:12px; text-align:center; border:2px dashed #cbd5e1; margin-bottom:20px">
-                    <p style="font-size:13px; color:#64748b; margin-bottom:5px">NGÂN HÀNG MB BANK</p>
-                    <p style="font-size:24px; font-weight:800; color:#333; margin-bottom:5px; letter-spacing:1px">0123 456 789</p>
-                    <p style="font-size:14px">Chủ TK: <b style="text-transform:uppercase">Nguyen Van A</b></p>
-                    <div style="margin-top:15px; background:#e0f2fe; color:#0369a1; padding:8px; border-radius:6px; font-size:13px">
-                        Nội dung: <b>NAP GENSAI</b>
-                    </div>
+                <div style="background:#f0f9ff; padding:15px; border-radius:10px; text-align:center; font-size:14px">
+                    <p><b>MB BANK</b></p>
+                    <p style="font-size:18px; font-weight:bold; margin:5px 0">0123 456 789</p>
+                    <p>Nội dung: <b style="color:red">NAP GENSAI</b></p>
                 </div>
-                <button class="btn-primary" onclick="fakeDeposit(50000, 'Chuyển khoản MB')">XÁC NHẬN ĐÃ CHUYỂN 50K</button>
-                <p style="text-align:center; font-size:12px; color:#999; margin-top:15px">Hệ thống tự động cộng tiền sau 5 giây.</p>
+                <button class="btn-primary" style="width:100%; margin-top:20px" onclick="fakeDeposit(50000, 'Chuyển khoản')">[TEST] Nạp 50k</button>
             </div>
 
             <div id="card-area" style="display:none">
-                <select class="input-box">
-                    <option>Viettel</option>
-                    <option>Vinaphone</option>
-                    <option>Mobifone</option>
-                </select>
-                <select class="input-box">
-                    <option>10.000đ</option>
-                    <option>20.000đ</option>
-                    <option>50.000đ</option>
-                    <option>100.000đ</option>
-                </select>
-                <input type="text" class="input-box" placeholder="Mã thẻ cào">
-                <input type="text" class="input-box" placeholder="Số Series">
-                <button class="btn-primary" onclick="alert('Hệ thống thẻ đang bảo trì, vui lòng dùng Bank!')">NẠP THẺ NGAY</button>
+                <select class="input-box"><option>Viettel</option><option>Vina</option></select>
+                <select class="input-box"><option>10.000đ</option><option>50.000đ</option></select>
+                <input type="text" class="input-box" placeholder="Mã thẻ">
+                <input type="text" class="input-box" placeholder="Seri">
+                <button class="btn-primary" style="width:100%" onclick="alert('Đang xử lý thẻ...')">GỬI THẺ</button>
             </div>
         </div>
     </div>
@@ -60,20 +47,15 @@
     <script>
         if(!localStorage.getItem('isLoggedIn')) window.location.href = 'login.html';
 
+        // MENU LOGIC
         const uName = localStorage.getItem('myUser');
         const menuBox = document.getElementById('mainMenu');
-        menuBox.innerHTML = `
-            <div style="padding:10px; font-size:12px; color:#888; border-bottom:1px solid #eee">Acc: <b>${uName}</b></div>
-            <a href="index.html" class="menu-item">Trang chủ</a>
-            <a href="dashboard.html" class="menu-item">Shop Vật Phẩm</a>
-            <a href="deposit.html" class="menu-item">Nạp Tiền</a>
-            <a href="history.html" class="menu-item">Lịch Sử Đơn</a>
-            <a href="#" onclick="doLogout()" class="menu-item logout">Đăng xuất</a>
-        `;
-
+        menuBox.innerHTML = `<div style="padding:10px; font-size:12px; color:#888; border-bottom:1px solid #eee">Acc: <b>${uName}</b></div>
+            <a href="index.html" class="menu-item">Trang chủ</a><a href="dashboard.html" class="menu-item">Shop</a><a href="deposit.html" class="menu-item">Nạp Tiền</a><a href="history.html" class="menu-item">Lịch Sử</a><a href="#" onclick="doLogout()" class="menu-item logout">Đăng xuất</a>`;
         function toggleMenu() { menuBox.classList.toggle('active'); }
         function doLogout() { localStorage.removeItem('isLoggedIn'); window.location.href = 'index.html'; }
 
+        // LOGIC NẠP TIỀN
         function switchTab(t) {
             document.getElementById('bank-area').style.display = (t=='bank') ? 'block' : 'none';
             document.getElementById('card-area').style.display = (t=='card') ? 'block' : 'none';
@@ -82,10 +64,12 @@
         }
 
         function fakeDeposit(amount, method) {
+            // 1. Cộng tiền
             let bal = parseInt(localStorage.getItem('myBalance')) || 0;
             bal += amount;
             localStorage.setItem('myBalance', bal);
 
+            // 2. LƯU LỊCH SỬ NẠP (Mới thêm)
             let depHistory = JSON.parse(localStorage.getItem('myDepositHistory')) || [];
             let newDep = {
                 id: 'NAP' + Math.floor(Math.random() * 9000),
@@ -94,18 +78,12 @@
                 date: new Date().toLocaleString('vi-VN'),
                 status: 'Thành công'
             };
-            depHistory.unshift(newDep);
+            depHistory.unshift(newDep); // Thêm vào đầu
             localStorage.setItem('myDepositHistory', JSON.stringify(depHistory));
 
-            alert("Hệ thống đã nhận được " + amount.toLocaleString() + "đ. Chúc bạn mua sắm vui vẻ!");
-            window.location.href = "history.html";
+            alert("Nạp thành công " + amount.toLocaleString() + "đ");
+            window.location.href = "history.html"; // Chuyển thẳng sang lịch sử để xem
         }
-        
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('.menu-toggle') && !e.target.closest('.mobile-menu')) {
-                menuBox.classList.remove('active');
-            }
-        });
     </script>
 </body>
 </html>
