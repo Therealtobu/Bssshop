@@ -8,61 +8,72 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    
     <nav class="navbar">
         <div class="container nav-inner">
-            <div class="logo">GENSAISHOP</div>
-            
-            <div class="menu-toggle" onclick="toggleMenu()">
-                <i class="fa-solid fa-bars"></i>
-            </div>
-
-            <div class="mobile-menu" id="mainMenu">
-                </div>
+            <div class="logo" onclick="window.location.href='index.html'">GENSAISHOP</div>
+            <div class="menu-toggle" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></div>
+            <div class="mobile-menu" id="mainMenu"></div>
         </div>
     </nav>
 
-    <div class="container" style="text-align: center; margin-top: 40px;">
-        <div style="background: #000; color: white; padding: 40px 20px; border-radius: 20px;">
-            <h1 style="font-size: 28px; margin-bottom: 15px;">Chào mừng đến<br>GENSAI STORE</h1>
-            <p id="welcome-text" style="opacity: 0.8; margin-bottom: 20px; font-size: 14px;">
-                Đăng nhập để trải nghiệm dịch vụ.
-            </p>
+    <div class="container hero-wrapper">
+        <div class="hero-card">
             
-            <button onclick="handleMainBtn()" class="btn-primary" style="background: white; color: black;">
-                <span id="btn-text">BẮT ĐẦU NGAY</span>
+            <div class="tag-premium">
+                <i class="fa-solid fa-bolt"></i> BEE SWARM PREMIUM
+            </div>
+
+            <h1 class="hero-title">
+                Nâng Tầm <br>Trải Nghiệm <br>Bee Swarm
+            </h1>
+
+            <p class="hero-desc">
+                Hệ thống cung cấp Voucher, Vật phẩm Bee Swarm Simulator tự động. Bảo mật tuyệt đối, giá rẻ nhất thị trường.
+            </p>
+
+            <button onclick="handleMainBtn()" class="btn-hero">
+                <span id="btn-text">VÀO CỬA HÀNG</span> <i class="fa-solid fa-arrow-right"></i>
             </button>
-        </div>
-        
-        <h3 style="margin-top: 40px; text-align:left">Dịch vụ Demo</h3>
-        <div class="grid">
-            <div class="card"><div class="card-body"><div class="card-title">Cày Thuê Blox Fruit</div><div class="price">20.000đ</div></div></div>
-            <div class="card"><div class="card-body"><div class="card-title">Nạp Robux VNG</div><div class="price">50.000đ</div></div></div>
+
+            <div class="floating-badge badge-1">
+                <div class="fb-icon" style="background: #22c55e;">
+                    <i class="fa-solid fa-check"></i>
+                </div>
+                <div>
+                    Uy tín<br>
+                    <span style="font-weight:400; color:#666; font-size:10px">Đã xác thực</span>
+                </div>
+            </div>
+
+            <div class="floating-badge badge-2">
+                <div class="fb-icon" style="background: #3b82f6;">
+                    <i class="fa-solid fa-bolt"></i>
+                </div>
+                <div>
+                    Tốc độ<br>
+                    <span style="font-weight:400; color:#666; font-size:10px">Xử lý 5s</span>
+                </div>
+            </div>
+
         </div>
     </div>
 
     <script>
-        // 1. Kiểm tra đăng nhập
-        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        const isLog = localStorage.getItem('isLoggedIn') === 'true';
         const menu = document.getElementById('mainMenu');
 
-        // 2. Tạo Menu dựa trên trạng thái
-        if (isLoggedIn) {
-            // Nếu ĐÃ đăng nhập -> Hiện Shop, Nạp, Lịch sử
+        if (isLog) {
             const user = localStorage.getItem('myUser');
             menu.innerHTML = `
-                <div style="padding:10px; font-size:12px; color:#888">Xin chào, <b>${user}</b></div>
+                <div style="padding:10px; font-size:12px; color:#888; border-bottom:1px solid #eee">Acc: <b>${user}</b></div>
                 <a href="index.html" class="menu-item">Trang chủ</a>
-                <a href="dashboard.html" class="menu-item">Mua Dịch Vụ</a>
+                <a href="dashboard.html" class="menu-item">Cửa Hàng</a>
                 <a href="deposit.html" class="menu-item">Nạp Tiền</a>
                 <a href="history.html" class="menu-item">Lịch Sử Đơn</a>
                 <a href="#" onclick="logout()" class="menu-item logout">Đăng xuất</a>
             `;
-            // Đổi nội dung trang chủ
-            document.getElementById('welcome-text').innerText = "Bạn đã đăng nhập thành công.";
-            document.getElementById('btn-text').innerText = "VÀO SHOP MUA HÀNG";
+            document.getElementById('btn-text').innerText = "MUA VẬT PHẨM NGAY";
         } else {
-            // Nếu CHƯA đăng nhập -> Hiện Đăng nhập, Đăng ký
             menu.innerHTML = `
                 <a href="index.html" class="menu-item">Trang chủ</a>
                 <a href="login.html" class="menu-item">Đăng Nhập</a>
@@ -70,27 +81,10 @@
             `;
         }
 
-        // 3. Hàm bật tắt menu
-        function toggleMenu() {
-            menu.classList.toggle('active');
-        }
-
-        // 4. Xử lý nút bấm to ở giữa
-        function handleMainBtn() {
-            if(isLoggedIn) {
-                window.location.href = "dashboard.html";
-            } else {
-                window.location.href = "login.html";
-            }
-        }
-
-        // 5. Hàm đăng xuất
-        function logout() {
-            localStorage.removeItem('isLoggedIn');
-            window.location.reload(); // Tải lại trang
-        }
+        function toggleMenu() { menu.classList.toggle('active'); }
+        function handleMainBtn() { window.location.href = isLog ? "dashboard.html" : "login.html"; }
+        function logout() { localStorage.removeItem('isLoggedIn'); window.location.reload(); }
         
-        // Đóng menu khi bấm ra ngoài
         document.addEventListener('click', function(e) {
             if (!e.target.closest('.menu-toggle') && !e.target.closest('.mobile-menu')) {
                 menu.classList.remove('active');
