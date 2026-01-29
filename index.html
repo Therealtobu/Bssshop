@@ -20,7 +20,7 @@
         <div class="hero-card">
             
             <div class="tag-premium">
-                <i class="fa-solid fa-bolt"></i> BEE SWARM PREMIUM
+                <i class="fa-solid fa-bolt"></i> PREMIUM GAMING SERVICE
             </div>
 
             <h1 class="hero-title">
@@ -28,11 +28,11 @@
             </h1>
 
             <p class="hero-desc">
-                Hệ thống cung cấp Voucher, Vật phẩm Bee Swarm Simulator tự động. Bảo mật tuyệt đối, giá rẻ nhất thị trường.
+                Dịch vụ cung cấp Voucher, Vật phẩm Bee Swarm Simulator tự động. Bảo mật tuyệt đối, giá rẻ nhất thị trường.
             </p>
 
             <button onclick="handleMainBtn()" class="btn-hero">
-                <span id="btn-text">VÀO CỬA HÀNG</span> <i class="fa-solid fa-arrow-right"></i>
+                <span id="btn-text">Xem Dịch Vụ</span> <i class="fa-solid fa-arrow-right"></i>
             </button>
 
             <div class="floating-badge badge-1">
@@ -47,8 +47,7 @@
 
             <div class="floating-badge badge-2">
                 <div class="fb-icon" style="background: #3b82f6;">
-                    <i class="fa-solid fa-bolt"></i>
-                </div>
+                    <i class="fa-solid fa-clock"></i> </div>
                 <div>
                     Tốc độ<br>
                     <span style="font-weight:400; color:#666; font-size:10px">Xử lý 5s</span>
@@ -57,7 +56,6 @@
 
         </div>
     </div>
-
     <script>
         const isLog = localStorage.getItem('isLoggedIn') === 'true';
         const menu = document.getElementById('mainMenu');
@@ -72,13 +70,15 @@
                 <a href="history.html" class="menu-item">Lịch Sử Đơn</a>
                 <a href="#" onclick="logout()" class="menu-item logout">Đăng xuất</a>
             `;
-            document.getElementById('btn-text').innerText = "MUA VẬT PHẨM NGAY";
+            // Nếu đã đăng nhập thì nút dẫn vào Dashboard
+            document.getElementById('btn-text').innerText = "VÀO SHOP NGAY";
         } else {
             menu.innerHTML = `
                 <a href="index.html" class="menu-item">Trang chủ</a>
                 <a href="login.html" class="menu-item">Đăng Nhập</a>
                 <a href="register.html" class="menu-item">Đăng Ký</a>
             `;
+            // Chưa đăng nhập thì nút dẫn vào Login
         }
 
         function toggleMenu() { menu.classList.toggle('active'); }
