@@ -86,10 +86,9 @@
     </div>
 
     <script>
-        // 1. KIỂM TRA ĐĂNG NHẬP
+        
         if(!localStorage.getItem('isLoggedIn')) window.location.href = 'login.html';
 
-        // 2. MENU LOGIC
         const uName = localStorage.getItem('myUser');
         const menuBox = document.getElementById('mainMenu');
         menuBox.innerHTML = `
@@ -104,7 +103,7 @@
         function toggleMenu() { menuBox.classList.toggle('active'); }
         function doLogout() { localStorage.removeItem('isLoggedIn'); window.location.href = 'index.html'; }
 
-        // 3. ENGINE HIỂN THỊ TIỀN
+        
         let balance = parseInt(localStorage.getItem('myBalance')) || 0;
         document.getElementById('uName').innerText = uName;
         document.getElementById('uBal').innerText = balance.toLocaleString();
@@ -120,7 +119,7 @@
 
         function closeModal() { document.getElementById('buyModal').style.display = 'none'; }
 
-        // 4. ENGINE LƯU ĐƠN HÀNG (CÓ LƯU PASS)
+        
         function processOrder() {
             let acc = document.getElementById('accUser').value;
             let pass = document.getElementById('accPass').value; // Lấy mật khẩu khách nhập
@@ -139,7 +138,7 @@
                     service: currentItem.name,
                     price: currentItem.price,
                     acc: acc, 
-                    pass: pass, // Đẩy mật khẩu sang cho Admin xem
+                    pass: pass, 
                     date: new Date().toLocaleString('vi-VN'),
                     status: 'Chờ xử lý'
                 };
@@ -153,7 +152,7 @@
             }
         }
 
-        // Đóng menu khi bấm ra ngoài
+        
         document.addEventListener('click', function(e) {
             if (!e.target.closest('.menu-toggle') && !e.target.closest('.mobile-menu')) {
                 menuBox.classList.remove('active');
