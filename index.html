@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>GENSAISHOP</title>
+    <title>Trang Chủ - GENSAISHOP</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -15,30 +15,32 @@
             <div class="mobile-menu" id="mainMenu"></div>
         </div>
     </nav>
-    <div class="container">
-        <div class="hero-wrapper">
-            <div class="hero-card">
-                <div style="font-size:12px; letter-spacing:3px; color:#888; margin-bottom:20px;">PREMIUM SERVICE</div>
-                <h1 class="hero-title">Nâng Tầm <br>Trải Nghiệm <br>Bee Swarm</h1>
-                <p class="hero-desc">Hệ thống cung cấp vật phẩm tự động. Bảo mật tuyệt đối, giá rẻ nhất thị trường.</p>
-                <button onclick="handleMainBtn()" class="btn-hero"><span id="btn-text">VÀO CỬA HÀNG</span> <i class="fa-solid fa-arrow-right"></i></button>
-                <div class="floating-badge badge-1"><i class="fa-solid fa-check" style="color:#22c55e"></i> Uy tín Đã xác thực</div>
-                <div class="floating-badge badge-2"><i class="fa-solid fa-bolt" style="color:#3b82f6"></i> Tốc độ Xử lý 5s</div>
-            </div>
+
+    <div class="container hero-wrapper">
+        <div class="hero-card">
+            <div class="tag-premium"><i class="fa-solid fa-bolt"></i> PREMIUM GAMING SERVICE</div>
+            <h1 class="hero-title">Nâng Tầm <br>Trải Nghiệm <br>Bee Swarm</h1>
+            <p class="hero-desc">Dịch vụ cung cấp Voucher, Vật phẩm Bee Swarm Simulator tự động. Bảo mật tuyệt đối, giá rẻ nhất thị trường.</p>
+            <button onclick="handleMainBtn()" class="btn-hero"><span id="btn-text">Xem Dịch Vụ</span> <i class="fa-solid fa-arrow-right"></i></button>
+            <div class="floating-badge badge-1"><div class="fb-icon" style="background: #22c55e;"><i class="fa-solid fa-check"></i></div><div>Uy tín<br><span style="font-weight:400; color:#666; font-size:10px">Đã xác thực</span></div></div>
+            <div class="floating-badge badge-2"><div class="fb-icon" style="background: #3b82f6;"><i class="fa-solid fa-clock"></i></div><div>Tốc độ<br><span style="font-weight:400; color:#666; font-size:10px">Xử lý 5s</span></div></div>
         </div>
     </div>
+
     <script>
         const isLog = localStorage.getItem('isLoggedIn') === 'true';
         const menu = document.getElementById('mainMenu');
         if (isLog) {
-            menu.innerHTML = `<a href="index.html" class="menu-item">Trang chủ</a><a href="dashboard.html" class="menu-item">Cửa Hàng</a><a href="deposit.html" class="menu-item">Nạp Tiền</a><a href="history.html" class="menu-item">Lịch Sử</a><a href="#" onclick="logout()" class="menu-item logout">Đăng xuất</a>`;
-            document.getElementById('btn-text').innerText = "MUA VẬT PHẨM NGAY";
+            const user = localStorage.getItem('myUser');
+            menu.innerHTML = `<div style="padding:10px; font-size:12px; color:#888; border-bottom:1px solid #eee">Acc: <b>${user}</b></div><a href="index.html" class="menu-item">Trang chủ</a><a href="dashboard.html" class="menu-item">Cửa Hàng</a><a href="deposit.html" class="menu-item">Nạp Tiền</a><a href="history.html" class="menu-item">Lịch Sử Đơn</a><a href="#" onclick="logout()" class="menu-item logout">Đăng xuất</a>`;
+            document.getElementById('btn-text').innerText = "VÀO SHOP NGAY";
         } else {
             menu.innerHTML = `<a href="index.html" class="menu-item">Trang chủ</a><a href="login.html" class="menu-item">Đăng Nhập</a><a href="register.html" class="menu-item">Đăng Ký</a>`;
         }
         function toggleMenu() { menu.classList.toggle('active'); }
         function handleMainBtn() { window.location.href = isLog ? "dashboard.html" : "login.html"; }
         function logout() { localStorage.removeItem('isLoggedIn'); window.location.reload(); }
+        document.addEventListener('click', function(e) { if (!e.target.closest('.menu-toggle') && !e.target.closest('.mobile-menu')) { menu.classList.remove('active'); } });
     </script>
 </body>
 </html>
