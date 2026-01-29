@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Lịch Sử</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container nav-inner">
+            <div class="logo">ROBLOX HUB</div>
+            <div class="nav-menu">
+                <a href="dashboard.html">Dịch Vụ</a>
+                <a href="deposit.html">Nạp Tiền</a>
+                <a href="history.html" class="active">Lịch Sử</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="table-wrapper" style="margin-top:30px">
+            <h2 style="margin-bottom:20px">Lịch Sử Đơn Hàng</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Mã đơn</th>
+                        <th>Dịch vụ</th>
+                        <th>Tài khoản Game</th>
+                        <th>Giá tiền</th>
+                        <th>Ngày mua</th>
+                        <th>Trạng thái</th>
+                    </tr>
+                </thead>
+                <tbody id="list"></tbody>
+            </table>
+            <p id="empty" style="text-align:center; padding:20px; color:#999; display:none">Chưa có đơn hàng nào.</p>
+        </div>
+    </div>
+
+    <script>
+        if(!localStorage.getItem('isLoggedIn')) window.location.href = 'login.html';
+
+        let history = JSON.parse(localStorage.getItem('myHistory')) || [];
+        let tbody = document.getElementById('list');
+
+        if(history.length == 0) document.getElementById('empty').style.display = 'block';
+
+        history.forEach(h => {
+            let row = `<tr>
+                <td><b>${h.id}</b></td>
+                <td>${h.service}</td>
+                <td style="color:#555">${h.acc}</td>
+                <td style="color:red; font-weight:bold">-${h.price.toLocaleString()}đ</td>
+                <td>${h.date}</td>
+                <td><span class="status pending">${h.status}</span></td>
+            </tr>`;
+            tbody.innerHTML += row;
+        });
+    </script>
+</body>
+</html>
