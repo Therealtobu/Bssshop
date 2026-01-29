@@ -2,26 +2,45 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Đăng Ký</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Đăng Ký - GENSAISHOP</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <div class="auth-box">
-        <h2 style="text-align: center; margin-bottom: 20px;">Đăng Ký Tài Khoản</h2>
-        <input type="text" id="user" class="input-box" placeholder="Tên đăng nhập">
-        <input type="password" id="pass" class="input-box" placeholder="Mật khẩu">
-        <button onclick="register()" class="btn-primary" style="width:100%">ĐĂNG KÝ</button>
-        <p style="text-align:center; margin-top:15px"><a href="login.html">Đã có tài khoản? Đăng nhập</a></p>
+    <nav class="navbar">
+        <div class="container nav-inner">
+            <div class="logo" onclick="window.location.href='index.html'">GENSAISHOP</div>
+            <div class="menu-toggle" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></div>
+            <div class="mobile-menu" id="mainMenu"></div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="auth-box">
+            <h2 style="text-align: center; margin-bottom: 20px;">Đăng Ký</h2>
+            <input type="text" id="user" class="input-box" placeholder="Tên đăng nhập">
+            <input type="password" id="pass" class="input-box" placeholder="Mật khẩu">
+            <button onclick="register()" class="btn-primary" style="width:100%">TẠO TÀI KHOẢN</button>
+            <p style="text-align:center; margin-top:15px; font-size:13px"><a href="login.html">Đã có tài khoản? Đăng nhập</a></p>
+        </div>
     </div>
+
     <script>
+        // MENU SCRIPT
+        const menuBox = document.getElementById('mainMenu');
+        menuBox.innerHTML = `<a href="index.html" class="menu-item">Trang chủ</a><a href="login.html" class="menu-item">Đăng Nhập</a><a href="register.html" class="menu-item">Đăng Ký</a>`;
+        function toggleMenu() { menuBox.classList.toggle('active'); }
+
+        // LOGIC
         function register() {
             const u = document.getElementById('user').value;
             const p = document.getElementById('pass').value;
             if(!u || !p) return alert("Vui lòng nhập đủ thông tin!");
             localStorage.setItem('myUser', u);
             localStorage.setItem('myPass', p);
-            localStorage.setItem('myBalance', 0); // Mặc định 0đ
-            localStorage.setItem('myHistory', '[]'); // Tạo lịch sử rỗng
+            localStorage.setItem('myBalance', 0);
+            localStorage.setItem('myHistory', '[]');
             alert("Đăng ký thành công!");
             window.location.href = "login.html";
         }
