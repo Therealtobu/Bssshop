@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Nạp Tiền</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container nav-inner">
+            <div class="logo">ROBLOX HUB</div>
+            <div class="nav-menu">
+                <a href="dashboard.html">Dịch Vụ</a>
+                <a href="deposit.html" class="active">Nạp Tiền</a>
+                <a href="history.html">Lịch Sử</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="auth-box" style="max-width:600px; margin-top:30px">
+            <h2 style="margin-bottom:20px">Nạp Tiền Tài Khoản</h2>
+            
+            <div class="tab-header">
+                <div id="tab1" class="tab-btn active" onclick="switchTab('bank')">Chuyển Khoản</div>
+                <div id="tab2" class="tab-btn" onclick="switchTab('card')">Thẻ Cào</div>
+            </div>
+
+            <div id="bank-area">
+                <div style="background:#f0f9ff; padding:20px; border-radius:10px; text-align:center">
+                    <img src="https://img.vietqr.io/image/MB-0123456789-compact2.jpg" style="width:150px">
+                    <p style="margin-top:10px">Nội dung: <b style="color:red">NAP USER</b></p>
+                </div>
+                <button class="btn-primary" style="width:100%; margin-top:20px" onclick="fakeDeposit(50000)">[TEST] Nạp thử 50k</button>
+            </div>
+
+            <div id="card-area" style="display:none">
+                <select class="input-box"><option>Viettel</option><option>Vina</option></select>
+                <select class="input-box"><option>10.000đ</option><option>50.000đ</option></select>
+                <input type="text" class="input-box" placeholder="Mã thẻ">
+                <input type="text" class="input-box" placeholder="Seri">
+                <button class="btn-primary" style="width:100%" onclick="alert('Thẻ đang xử lý...')">GỬI THẺ</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        if(!localStorage.getItem('isLoggedIn')) window.location.href = 'login.html';
+
+        function switchTab(t) {
+            document.getElementById('bank-area').style.display = (t=='bank') ? 'block' : 'none';
+            document.getElementById('card-area').style.display = (t=='card') ? 'block' : 'none';
+            document.getElementById('tab1').className = (t=='bank') ? 'tab-btn active' : 'tab-btn';
+            document.getElementById('tab2').className = (t=='card') ? 'tab-btn active' : 'tab-btn';
+        }
+
+        function fakeDeposit(amount) {
+            let bal = parseInt(localStorage.getItem('myBalance'));
+            localStorage.setItem('myBalance', bal + amount);
+            alert("Nạp thành công!");
+            window.location.href = "dashboard.html";
+        }
+    </script>
+</body>
+</html>
