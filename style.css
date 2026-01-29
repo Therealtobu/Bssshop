@@ -20,8 +20,7 @@ body {
     flex-direction: column; 
 }
 
-/* --- 1. HIỆU ỨNG CHUYỂN TRANG (MỚI) --- */
-/* Khi vào trang, nội dung sẽ trượt từ dưới lên */
+/* --- HIỆU ỨNG VÀO TRANG --- */
 @keyframes pageEntrance {
     0% { opacity: 0; transform: translateY(20px); }
     100% { opacity: 1; transform: translateY(0); }
@@ -33,7 +32,6 @@ body {
     margin: 0 auto; 
     padding: 0 20px; 
     flex: 1; 
-    /* Áp dụng hiệu ứng vào container */
     animation: pageEntrance 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); 
 }
 
@@ -57,10 +55,10 @@ body {
 .mobile-menu.active { display: flex; }
 
 .menu-item { padding: 12px 15px; font-weight: 600; font-size: 14px; color: #333; border-radius: 8px; transition: all 0.2s; display: block; }
-.menu-item:hover { background: #f5f5f5; color: var(--primary); transform: translateX(5px); /* Trượt nhẹ sang phải */ }
+.menu-item:hover { background: #f5f5f5; color: var(--primary); transform: translateX(5px); }
 .menu-item.logout { color: red; border-top: 1px solid #eee; margin-top: 5px; }
 
-/* --- 2. HERO SECTION (CARD ĐEN TO) --- */
+/* HERO SECTION */
 .hero-wrapper { margin-top: 20px; display: flex; justify-content: center; margin-bottom: 0; }
 .hero-card {
     background-color: #0f0f0f; color: white; width: 100%;
@@ -70,40 +68,34 @@ body {
     box-shadow: 0 20px 50px rgba(0,0,0,0.3);
     transition: transform 0.4s ease;
 }
-.hero-card:hover { transform: scale(1.01); /* Phóng to cực nhẹ khi rê chuột vào */ }
+.hero-card:hover { transform: scale(1.01); }
 
 .tag-premium { font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: #888; margin-bottom: 20px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
 .hero-title { font-size: 52px; line-height: 1.05; font-weight: 800; margin-bottom: 25px; }
 .hero-desc { color: #ccc; font-size: 16px; line-height: 1.6; margin-bottom: 40px; max-width: 85%; }
 
-/* --- 3. HIỆU ỨNG NÚT BẤM (BOUNCY) --- */
-.btn-hero, .btn-primary, .btn-buy {
-    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Hiệu ứng nảy */
-    cursor: pointer;
-}
-
-/* Nút Hero (Trắng) */
+/* BUTTONS */
 .btn-hero {
     background: white; color: black; padding: 16px 32px;
     border-radius: 50px; font-weight: 800; font-size: 15px; border: none;
     display: inline-flex; align-items: center; gap: 10px; width: fit-content;
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer;
 }
 .btn-hero:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(255,255,255,0.2); }
-.btn-hero:active { transform: scale(0.95) translateY(0); } /* Nhún xuống khi bấm */
+.btn-hero:active { transform: scale(0.95); }
 
-/* Nút Primary (Đen) */
 .btn-primary { 
     background: var(--primary); color: white; padding: 14px 20px; 
     border-radius: 12px; border: none; font-weight: bold; font-size: 14px; 
+    transition: all 0.2s; cursor: pointer;
 }
-.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 15px rgba(0,0,0,0.2); }
 .btn-primary:active { transform: scale(0.95); }
 
-/* Nút Mua (Viền) */
 .btn-buy { 
     width: 100%; padding: 10px; background: white; 
     border: 2px solid var(--primary); border-radius: 8px; 
-    font-weight: 800; font-size: 12px; 
+    font-weight: 800; font-size: 12px; cursor: pointer;
+    transition: all 0.2s;
 }
 .btn-buy:hover { background: var(--primary); color: white; transform: translateY(-2px); }
 .btn-buy:active { transform: scale(0.95); }
@@ -115,15 +107,13 @@ body {
     box-shadow: 0 15px 30px rgba(0,0,0,0.4);
     display: flex; align-items: center; gap: 12px;
     font-size: 13px; font-weight: 700; z-index: 10; min-width: 160px;
-    transition: transform 0.3s;
 }
-.floating-badge:hover { transform: scale(1.1) !important; cursor: default; } /* Phóng to khi chạm vào */
 .fb-icon { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; flex-shrink: 0; }
 .badge-1 { top: 30%; right: -20px; animation: float 3s ease-in-out infinite; }
 .badge-2 { bottom: 25%; right: 10px; animation: float 4s ease-in-out infinite; animation-delay: 1s; }
 @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
 
-/* CARDS & GRID */
+/* --- CARD & GRID (ĐÃ SỬA LỖI MÀU NỀN) --- */
 .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 20px; }
 @media (min-width: 768px) { .grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 25px; } }
 
@@ -133,11 +123,19 @@ body {
     display: flex; flex-direction: column;
     transition: all 0.3s ease;
 }
-/* Hiệu ứng Hover Card: Nổi lên và bóng đổ đậm hơn */
-.card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); border-color: transparent; }
+.card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
 
-.card img { width: 100%; height: 140px; object-fit: contain; background: #202b30; padding: 15px; transition: transform 0.5s; }
-.card:hover img { transform: scale(1.05); } /* Ảnh phóng to nhẹ khi hover */
+/* --- QUAN TRỌNG: FIX LỖI LỆCH MÀU ẢNH TẠI ĐÂY --- */
+.card img { 
+    width: 100%; 
+    height: auto; /* Để ảnh tự chỉnh theo tỷ lệ */
+    aspect-ratio: 16/9; /* Giữ khung hình đẹp */
+    object-fit: cover; /* Lấp đầy khung mà không méo */
+    background: #151c21; /* Màu nền trùng khớp với ảnh Voucher */
+    padding: 0; /* XÓA KHOẢNG HỞ để liền mạch */
+    transition: transform 0.5s; 
+}
+.card:hover img { transform: scale(1.05); }
 
 .card-body { padding: 15px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
 .card-title { font-size: 14px; font-weight: bold; margin-bottom: 5px; }
@@ -145,7 +143,7 @@ body {
 
 /* INPUTS & AUTH */
 .input-box { width: 100%; padding: 14px; border: 2px solid #eee; border-radius: 10px; margin-bottom: 15px; outline: none; font-size: 14px; transition: 0.3s; }
-.input-box:focus { border-color: var(--primary); transform: translateY(-2px); } /* Input nổi lên khi gõ */
+.input-box:focus { border-color: var(--primary); transform: translateY(-2px); }
 .auth-box { max-width: 400px; margin: 40px auto; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.05); animation: pageEntrance 0.6s ease; }
 .center-screen { display: flex; justify-content: center; align-items: center; min-height: 80vh; }
 
