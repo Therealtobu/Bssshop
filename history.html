@@ -17,15 +17,26 @@
     </nav>
 
     <div class="container">
-        <div class="table-wrapper" style="margin-top:20px">
-            <h3 style="margin-bottom:15px">Lịch Sử Đơn Hàng</h3>
-            <table>
-                <thead>
-                    <tr><th>Mã</th><th>Dịch vụ</th><th>Acc Game</th><th>Giá</th><th>Trạng thái</th></tr>
-                </thead>
-                <tbody id="list"></tbody>
-            </table>
-            <p id="empty" style="text-align:center; padding:20px; color:#999; display:none; font-size:13px">Chưa có đơn nào.</p>
+        <div style="margin-top:20px">
+            <h3 style="margin-bottom:15px">Lịch Sử Mua Hàng</h3>
+            
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Mã đơn</th>
+                            <th>Dịch Vụ</th>
+                            <th>Giá</th>
+                            <th>Trạng Thái</th>
+                        </tr>
+                    </thead>
+                    <tbody id="list"></tbody>
+                </table>
+                <p id="empty" style="text-align:center; padding:20px; color:#999; display:none; font-size:13px">Chưa có đơn nào.</p>
+            </div>
+            <p style="font-size:11px; color:#888; margin-top:10px; text-align:center; font-style:italic">
+                <i class="fa-solid fa-arrow-left"></i> Vuốt sang trái để xem thêm <i class="fa-solid fa-arrow-right"></i>
+            </p>
         </div>
     </div>
 
@@ -35,16 +46,29 @@
         // MENU LOGIC
         const uName = localStorage.getItem('myUser');
         const menuBox = document.getElementById('mainMenu');
-        menuBox.innerHTML = `<div style="padding:10px; font-size:12px; color:#888; border-bottom:1px solid #eee">Acc: <b>${uName}</b></div><a href="index.html" class="menu-item">Trang chủ</a><a href="dashboard.html" class="menu-item">Mua Dịch Vụ</a><a href="deposit.html" class="menu-item">Nạp Tiền</a><a href="history.html" class="menu-item">Lịch Sử Đơn</a><a href="#" onclick="doLogout()" class="menu-item logout">Đăng xuất</a>`;
+        menuBox.innerHTML = `<div style="padding:10px; font-size:12px; color:#888; border-bottom:1px solid #eee">Acc: <b>${uName}</b></div><a href="index.html" class="menu-item">Trang chủ</a><a href="dashboard.html" class="menu-item">Shop</a><a href="deposit.html" class="menu-item">Nạp Tiền</a><a href="history.html" class="menu-item">Lịch Sử</a><a href="#" onclick="doLogout()" class="menu-item logout">Đăng xuất</a>`;
         function toggleMenu() { menuBox.classList.toggle('active'); }
         function doLogout() { localStorage.removeItem('isLoggedIn'); window.location.href = 'index.html'; }
 
         // HISTORY LOGIC
         let history = JSON.parse(localStorage.getItem('myHistory')) || [];
         let tbody = document.getElementById('list');
+
         if(history.length == 0) document.getElementById('empty').style.display = 'block';
+
         history.forEach(h => {
-            let row = `<tr><td><b>${h.id}</b></td><td>${h.service}</td><td style="color:#555">${h.acc}</td><td style="color:red; font-weight:bold">-${h.price.toLocaleString()}</td><td><span class="status pending">${h.status}</span></td></tr>`;
+            // Tự động cắt tên nếu dài quá (Ví dụ: Bear Bee Voucher -> Bear Bee...)
+            let shortName = h.service.length > 15 ? h.service.substring(0, 15) + '...' : h.service;
+            
+            let row = `<tr>
+                <td><b style="color:#333">${h.id}</b></td>
+                <td>
+                    <b>${shortName}</b><br>
+                    <span style="font-size:11px; color:#666">${h.acc}</span>
+                </td>
+                <td style="color:red; font-weight:bold">-${(h.price/1000)}k</td>
+                <td><span class="status pending">${h.status}</span></td>
+            </tr>`;
             tbody.innerHTML += row;
         });
     </script>
