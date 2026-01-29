@@ -2,36 +2,35 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Nạp Tiền</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Nạp Tiền - GENSAISHOP</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <nav class="navbar">
         <div class="container nav-inner">
-            <div class="logo">ROBLOX HUB</div>
-            <div class="nav-menu">
-                <a href="dashboard.html">Dịch Vụ</a>
-                <a href="deposit.html" class="active">Nạp Tiền</a>
-                <a href="history.html">Lịch Sử</a>
-            </div>
+            <div class="logo" onclick="window.location.href='index.html'">GENSAISHOP</div>
+            <div class="menu-toggle" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></div>
+            <div class="mobile-menu" id="mainMenu"></div>
         </div>
     </nav>
 
     <div class="container">
-        <div class="auth-box" style="max-width:600px; margin-top:30px">
-            <h2 style="margin-bottom:20px">Nạp Tiền Tài Khoản</h2>
-            
+        <div class="auth-box" style="max-width:600px; margin-top:20px">
+            <h3 style="margin-bottom:20px; text-align:center">Nạp Tiền</h3>
             <div class="tab-header">
-                <div id="tab1" class="tab-btn active" onclick="switchTab('bank')">Chuyển Khoản</div>
+                <div id="tab1" class="tab-btn active" onclick="switchTab('bank')">Bank (Auto)</div>
                 <div id="tab2" class="tab-btn" onclick="switchTab('card')">Thẻ Cào</div>
             </div>
 
             <div id="bank-area">
-                <div style="background:#f0f9ff; padding:20px; border-radius:10px; text-align:center">
-                    <img src="https://img.vietqr.io/image/MB-0123456789-compact2.jpg" style="width:150px">
-                    <p style="margin-top:10px">Nội dung: <b style="color:red">NAP USER</b></p>
+                <div style="background:#f0f9ff; padding:15px; border-radius:10px; text-align:center; font-size:14px">
+                    <p><b>MB BANK</b></p>
+                    <p style="font-size:18px; font-weight:bold; margin:5px 0">0123 456 789</p>
+                    <p>Nội dung: <b style="color:red">NAP GENSAI</b></p>
                 </div>
-                <button class="btn-primary" style="width:100%; margin-top:20px" onclick="fakeDeposit(50000)">[TEST] Nạp thử 50k</button>
+                <button class="btn-primary" style="width:100%; margin-top:20px" onclick="fakeDeposit(50000)">[TEST] Nạp 50k</button>
             </div>
 
             <div id="card-area" style="display:none">
@@ -39,7 +38,7 @@
                 <select class="input-box"><option>10.000đ</option><option>50.000đ</option></select>
                 <input type="text" class="input-box" placeholder="Mã thẻ">
                 <input type="text" class="input-box" placeholder="Seri">
-                <button class="btn-primary" style="width:100%" onclick="alert('Thẻ đang xử lý...')">GỬI THẺ</button>
+                <button class="btn-primary" style="width:100%" onclick="alert('Đang xử lý...')">GỬI THẺ</button>
             </div>
         </div>
     </div>
@@ -47,13 +46,20 @@
     <script>
         if(!localStorage.getItem('isLoggedIn')) window.location.href = 'login.html';
 
+        // MENU LOGIC
+        const uName = localStorage.getItem('myUser');
+        const menuBox = document.getElementById('mainMenu');
+        menuBox.innerHTML = `<div style="padding:10px; font-size:12px; color:#888; border-bottom:1px solid #eee">Acc: <b>${uName}</b></div><a href="index.html" class="menu-item">Trang chủ</a><a href="dashboard.html" class="menu-item">Mua Dịch Vụ</a><a href="deposit.html" class="menu-item">Nạp Tiền</a><a href="history.html" class="menu-item">Lịch Sử Đơn</a><a href="#" onclick="doLogout()" class="menu-item logout">Đăng xuất</a>`;
+        function toggleMenu() { menuBox.classList.toggle('active'); }
+        function doLogout() { localStorage.removeItem('isLoggedIn'); window.location.href = 'index.html'; }
+
+        // DEPOSIT LOGIC
         function switchTab(t) {
             document.getElementById('bank-area').style.display = (t=='bank') ? 'block' : 'none';
             document.getElementById('card-area').style.display = (t=='card') ? 'block' : 'none';
             document.getElementById('tab1').className = (t=='bank') ? 'tab-btn active' : 'tab-btn';
             document.getElementById('tab2').className = (t=='card') ? 'tab-btn active' : 'tab-btn';
         }
-
         function fakeDeposit(amount) {
             let bal = parseInt(localStorage.getItem('myBalance'));
             localStorage.setItem('myBalance', bal + amount);
