@@ -172,3 +172,59 @@ th, td { padding: 15px 12px; border-bottom: 1px solid #f0f0f0; font-size: 13px; 
 .tab-header { display: flex; margin-bottom: 20px; background: #f5f5f5; padding: 5px; border-radius: 50px; }
 .tab-btn { flex: 1; text-align: center; padding: 12px; cursor: pointer; font-weight: 700; font-size: 13px; color: #888; border-radius: 40px; transition: 0.3s; }
 .tab-btn.active { color: white; background: var(--primary); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+/* --- THÊM VÀO CUỐI FILE style.css --- */
+
+/* PHÂN CHIA KHU VỰC */
+.section-header {
+    background: #f8fafc;
+    padding: 15px;
+    border-radius: 12px;
+    margin-top: 30px;
+    margin-bottom: 15px;
+    border-left: 5px solid #000;
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 15px;
+    display: flex; align-items: center; gap: 10px;
+}
+
+/* MODAL CÀY THUÊ */
+.variant-group { display: flex; gap: 10px; margin-bottom: 15px; }
+.variant-btn {
+    flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 8px;
+    text-align: center; cursor: pointer; font-size: 13px; font-weight: 600;
+    transition: 0.2s;
+}
+.variant-btn.selected { background: #000; color: #fff; border-color: #000; }
+
+.upload-btn-wrapper { position: relative; overflow: hidden; display: inline-block; width: 100%; margin-bottom: 15px; }
+.btn-upload {
+    border: 2px dashed #ccc; color: #666; background: white;
+    padding: 10px; border-radius: 8px; width: 100%; font-size: 13px; cursor: pointer;
+}
+.upload-btn-wrapper input[type=file] {
+    font-size: 100px; position: absolute; left: 0; top: 0; opacity: 0; cursor: pointer;
+}
+
+/* THÔNG BÁO (BADGE) */
+.nav-inner { position: relative; }
+.badge-notify {
+    position: absolute; top: 15px; right: 40px; /* Gần nút menu */
+    background: red; color: white; border-radius: 50%;
+    width: 18px; height: 18px; font-size: 10px;
+    display: flex; justify-content: center; align-items: center;
+    font-weight: bold; z-index: 1001; animation: pulse 2s infinite;
+    display: none; /* Mặc định ẩn */
+}
+@keyframes pulse { 0% {transform: scale(1);} 50% {transform: scale(1.2);} 100% {transform: scale(1);} }
+
+/* POPUP XÁC NHẬN GIÁ */
+.price-confirm-box {
+    background: #fff; padding: 20px; border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    width: 90%; max-width: 400px; z-index: 3000;
+    display: none; border: 2px solid #22c55e;
+    animation: slideUp 0.4s ease;
+}
+@keyframes slideUp { from {bottom: -100px;} to {bottom: 20px;} }
