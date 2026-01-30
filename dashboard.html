@@ -17,7 +17,7 @@
                     <i class="fa-solid fa-bell"></i>
                     <div id="bell-dot" class="bell-dot"></div>
                     <div id="notif-box" class="notif-box">
-                        <h4 style="margin-bottom:10px; font-size:14px; color:#333;">Thông Báo</h4>
+                        <h4 style="margin-bottom:10px; font-size:14px; color:#fff;">Thông Báo</h4>
                         <div id="notif-content"></div>
                     </div>
                 </div>
@@ -110,7 +110,7 @@
             </div>
 
             <div class="card">
-                <img src="https://i.postimg.cc/0QmTxCtT/images-(17).jpg">
+                <img src="https://i.postimg.cc/C1jQ9x5p/Screenshot-20260130-123640-Discord.jpg">
                 <div class="card-body">
                     <div class="card-title">Coconut Clogs</div>
                     <div class="price" style="color:#ef4444; font-size:13px">Thương lượng</div>
@@ -119,7 +119,7 @@
             </div>
 
             <div class="card">
-                <img src="https://i.postimg.cc/C1jQ9x5p/Screenshot-20260130-123640-Discord.jpg">
+                <img src="https://i.postimg.cc/0QmTxCtT/images-(17).jpg">
                 <div class="card-body">
                     <div class="card-title">Gummy Boots</div>
                     <div class="price" style="color:#ef4444; font-size:13px">Thương lượng</div>
@@ -163,12 +163,11 @@
             <p id="priceRow" style="margin-bottom:10px">Giá: <b id="mPrice" style="color:red">...</b></p>
             
             <div id="variantArea" class="variant-group" style="display:none"></div>
-            
             <input type="text" id="accUser" class="input-box" placeholder="Username Roblox...">
             
             <div id="boostArea" style="display:none">
                 <input type="password" id="accPass" class="input-box" placeholder="Mật khẩu (Bắt buộc)...">
-                <label style="font-size:13px; font-weight:bold; display:block; margin:10px 0 5px">Nguyên liệu & Tiền hiện có:</label>
+                <label style="font-size:13px; font-weight:bold; display:block; margin:10px 0 5px; color:#ccc">Nguyên liệu & Tiền hiện có:</label>
                 <textarea id="materialNote" class="input-box" style="height:60px" placeholder="Ví dụ: Đủ nl, 500 tỷ honey..."></textarea>
                 
                 <div class="upload-btn-wrapper">
@@ -191,12 +190,12 @@
     </div>
 
     <script>
-        // 1. KIỂM TRA ĐĂNG NHẬP
+        // KIỂM TRA ĐĂNG NHẬP
         if(!localStorage.getItem('isLoggedIn')) window.location.href = 'login.html';
         const uName = localStorage.getItem('myUser');
         const menuBox = document.getElementById('mainMenu');
         
-        // 2. MENU
+        // MENU
         menuBox.innerHTML = `
             <div style="padding:10px; font-size:12px; color:#888; border-bottom:1px solid #333">Acc: <b>${uName}</b></div>
             <a href="index.html" class="menu-item">Trang chủ</a>
@@ -208,14 +207,14 @@
         function toggleMenu() { menuBox.classList.toggle('active'); }
         function doLogout() { localStorage.removeItem('isLoggedIn'); window.location.href = 'index.html'; }
 
-        // 3. HIỂN THỊ SỐ DƯ
+        // SỐ DƯ
         let balance = parseInt(localStorage.getItem('myBalance')) || 0;
         document.getElementById('uName').innerText = uName;
         document.getElementById('uBal').innerText = balance.toLocaleString();
 
         let currentItem = {}, selectedVariant = "", finalBase64 = "";
 
-        // 4. MỞ MODAL
+        // MỞ MODAL
         function openModal(type, name, price, variants = []) {
             currentItem = { type, name, price }; 
             selectedVariant = ""; 
@@ -225,7 +224,7 @@
             document.getElementById('accUser').value = "";
             document.getElementById('buyModal').style.display = 'flex';
             
-            // Reset Form Upload
+            // Reset Upload
             document.getElementById('hiveImg').value = "";
             document.getElementById('uploadBtnText').innerHTML = '<i class="fa-solid fa-camera"></i> Chọn ảnh tổ ong';
             document.getElementById('previewArea').style.display = 'none';
@@ -254,7 +253,7 @@
             }
         }
 
-        // 5. XỬ LÝ NÉN ẢNH
+        // NÉN ẢNH
         function compressImage(input) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
@@ -270,10 +269,9 @@
                         canvas.height = img.height * scaleSize;
                         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                         finalBase64 = canvas.toDataURL('image/jpeg', 0.7);
-                        
                         document.getElementById('imgPreview').src = finalBase64;
                         document.getElementById('previewArea').style.display = 'block';
-                        document.getElementById('uploadBtnText').innerText = "Đã nén ảnh thành công!";
+                        document.getElementById('uploadBtnText').innerText = "Đã nén ảnh!";
                     }
                 };
                 reader.readAsDataURL(input.files[0]);
@@ -286,7 +284,7 @@
             selectedVariant = val;
         }
 
-        // 6. XỬ LÝ ĐẶT HÀNG
+        // XỬ LÝ ĐƠN
         function processOrder() {
             let acc = document.getElementById('accUser').value;
             
@@ -308,7 +306,7 @@
                 let finalName = selectedVariant ? `${currentItem.name} (${selectedVariant})` : currentItem.name;
                 saveOrder(finalName, 0, acc, pass, "Đang xét giá", note, "boost");
                 
-                alert("Đã gửi đơn! Vui lòng theo dõi chuông thông báo để nhận báo giá.");
+                alert("Đã gửi đơn! Vui lòng theo dõi chuông thông báo.");
                 document.getElementById('buyModal').style.display = 'none';
             }
         }
@@ -331,21 +329,19 @@
             localStorage.setItem('myHistory', JSON.stringify(history));
         }
 
-        // 7. HỆ THỐNG THÔNG BÁO (CHUÔNG)
+        // HỆ THỐNG THÔNG BÁO
         function toggleNotif() {
             const box = document.getElementById('notif-box');
             box.style.display = (box.style.display === 'block') ? 'none' : 'block';
             checkBell();
         }
 
-        setInterval(checkBell, 2000); // Check mỗi 2 giây
+        setInterval(checkBell, 2000); 
         function checkBell() {
             let history = JSON.parse(localStorage.getItem('myHistory')) || [];
             let pendingConfirm = history.filter(h => h.status === "Chờ xác nhận");
             
-            // Hiện chấm đỏ nếu có tin mới
             document.getElementById('bell-dot').style.display = pendingConfirm.length > 0 ? 'block' : 'none';
-            
             const contentBox = document.getElementById('notif-content');
             contentBox.innerHTML = '';
             
@@ -354,12 +350,12 @@
             } else {
                 pendingConfirm.forEach(h => {
                     contentBox.innerHTML += `
-                        <div class="notif-item">
-                            <b>Admin báo giá:</b> ${h.service}<br>
+                        <div class="notif-item" style="border-bottom:1px solid #333; padding-bottom:10px; margin-bottom:10px">
+                            <b style="color:#fff">Admin báo giá:</b> ${h.service}<br>
                             Giá chốt: <b style="color:#ef4444">${h.price.toLocaleString()}đ</b>
                             <div style="display:flex; gap:5px">
-                                <button class="notif-btn" style="background:#22c55e" onclick="replyPrice('${h.id}', true)">Đồng ý làm</button>
-                                <button class="notif-btn" style="background:#ef4444" onclick="replyPrice('${h.id}', false)">Hủy đơn</button>
+                                <button class="notif-btn" style="background:#22c55e; color:#fff" onclick="replyPrice('${h.id}', true)">Đồng ý</button>
+                                <button class="notif-btn" style="background:#ef4444; color:#fff" onclick="replyPrice('${h.id}', false)">Hủy</button>
                             </div>
                         </div>
                     `;
@@ -377,9 +373,9 @@
                         balance -= history[idx].price;
                         localStorage.setItem('myBalance', balance);
                         history[idx].status = "Đang xử lý";
-                        alert("Đã chốt đơn! Admin sẽ vào cày ngay.");
+                        alert("Đã chốt đơn!");
                     } else { 
-                        return alert("Số dư không đủ! Vui lòng nạp thêm tiền."); 
+                        return alert("Số dư không đủ!"); 
                     }
                 } else {
                     history[idx].status = "Bị hủy";
@@ -392,7 +388,6 @@
             }
         }
 
-        // Đóng khi click ngoài
         document.addEventListener('click', function(e) { 
             if (!e.target.closest('.bell-wrapper')) document.getElementById('notif-box').style.display = 'none'; 
             if (!e.target.closest('.menu-toggle') && !e.target.closest('.mobile-menu')) document.getElementById('mainMenu').classList.remove('active');
