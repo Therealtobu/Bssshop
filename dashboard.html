@@ -11,7 +11,6 @@
     <nav class="navbar">
         <div class="container nav-inner">
             <img class="logo-img" onclick="window.location.href='index.html'" alt="GENSAI SHOP">
-            
             <div style="display:flex; align-items:center;">
                 <div class="bell-wrapper" onclick="toggleNotif()">
                     <i class="fa-solid fa-bell"></i>
@@ -23,7 +22,6 @@
                 </div>
                 <div class="menu-toggle" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></div>
             </div>
-            
             <div class="mobile-menu" id="mainMenu"></div>
         </div>
     </nav>
@@ -36,46 +34,56 @@
 
         <div class="section-header"><i class="fa-solid fa-ticket"></i> Mua Gamepass</div>
         <div class="grid">
-            <div class="card">
-                <img src="https://i.postimg.cc/7Lrp7X49/tum-voucherler-bee-swarm-13751871.png">
-                <div class="card-body"><div class="card-title">Bear Bee Voucher</div><div class="price">120.000đ</div><button class="btn-buy" onclick="openModal('gamepass', 'Bear Bee Voucher', 120000)">MUA NGAY</button></div>
-            </div>
-            <div class="card">
-                <img src="https://i.postimg.cc/3wZbGT9c/tum-voucherler-bee-swarm-13751871-1.png">
-                <div class="card-body"><div class="card-title">Cub Buddy Voucher</div><div class="price">80.000đ</div><button class="btn-buy" onclick="openModal('gamepass', 'Cub Buddy Voucher', 80000)">MUA NGAY</button></div>
-            </div>
-            <div class="card">
-                <img src="https://i.postimg.cc/Px336Qg7/tum-voucherler-bee-swarm-13751871-2.png">
-                <div class="card-body"><div class="card-title">x2 Bee Gather</div><div class="price">60.000đ</div><button class="btn-buy" onclick="openModal('gamepass', 'x2 Bee Gather', 60000)">MUA NGAY</button></div>
-            </div>
-            <div class="card">
-                <img src="https://i.postimg.cc/WpyYgS6N/tum-voucherler-bee-swarm-13751871-3.png">
-                <div class="card-body"><div class="card-title">x2 Convert Speed</div><div class="price">60.000đ</div><button class="btn-buy" onclick="openModal('gamepass', 'x2 Convert Speed', 60000)">MUA NGAY</button></div>
-            </div>
+            <div class="card"><img src="https://i.postimg.cc/7Lrp7X49/tum-voucherler-bee-swarm-13751871.png"><div class="card-body"><div class="card-title">Bear Bee Voucher</div><div class="price">120.000đ</div><button class="btn-buy" onclick="openModal('gamepass', 'Bear Bee Voucher', 120000)">MUA NGAY</button></div></div>
+            <div class="card"><img src="https://i.postimg.cc/3wZbGT9c/tum-voucherler-bee-swarm-13751871-1.png"><div class="card-body"><div class="card-title">Cub Buddy Voucher</div><div class="price">80.000đ</div><button class="btn-buy" onclick="openModal('gamepass', 'Cub Buddy Voucher', 80000)">MUA NGAY</button></div></div>
+            <div class="card"><img src="https://i.postimg.cc/Px336Qg7/tum-voucherler-bee-swarm-13751871-2.png"><div class="card-body"><div class="card-title">x2 Bee Gather</div><div class="price">60.000đ</div><button class="btn-buy" onclick="openModal('gamepass', 'x2 Bee Gather', 60000)">MUA NGAY</button></div></div>
+            <div class="card"><img src="https://i.postimg.cc/WpyYgS6N/tum-voucherler-bee-swarm-13751871-3.png"><div class="card-body"><div class="card-title">x2 Convert Speed</div><div class="price">60.000đ</div><button class="btn-buy" onclick="openModal('gamepass', 'x2 Convert Speed', 60000)">MUA NGAY</button></div></div>
         </div>
 
         <div class="section-header" style="border-left-color: #3b82f6;"><i class="fa-solid fa-shield-halved"></i> Dịch vụ Cày Thuê</div>
         <div class="grid">
+            
             <div class="card">
                 <img src="https://i.postimg.cc/Y9Sn9zqD/Screenshot-20260130-123045-Discord.jpg">
-                <div class="card-body"><div class="card-title">Bubble / Fire Mask</div><div class="price" style="color:#666; font-size:13px">Thương lượng</div><button class="btn-buy" onclick="openModal('boost', 'Mask Co Ban', 0, ['Bubble Mask', 'Fire Mask'])">ĐẶT ĐƠN</button></div>
+                <div class="card-body">
+                    <div class="card-title">Basic Masks</div>
+                    <div class="price" style="color:#666; font-size:13px">Thương lượng</div>
+                    <button class="btn-buy" onclick="openModal('boost', 'Basic Mask', 0, ['Honey Mask', 'Fire Mask', 'Bubble Mask'])">ĐẶT ĐƠN</button>
+                </div>
             </div>
+
             <div class="card">
-                <img src="https://i.postimg.cc/v82BcYXK/Screenshot-20260130-123511-Discord.jpg">
-                <div class="card-body"><div class="card-title">Diamond / Demon Mask</div><div class="price" style="color:#666; font-size:13px">Thương lượng</div><button class="btn-buy" onclick="openModal('boost', 'Mask Cao Cap', 0, ['Diamond Mask', 'Demon Mask'])">ĐẶT ĐƠN</button></div>
+                <img src="https://i.postimg.cc/d0LSB9rp/Picsart-26-01-30-13-27-53-922.png">
+                <div class="card-body">
+                    <div class="card-title">Advanced Masks</div>
+                    <div class="price" style="color:#666; font-size:13px">Thương lượng</div>
+                    <button class="btn-buy" onclick="openModal('boost', 'Advanced Mask', 0, ['Evil Mask', 'Diamond Mask', 'Gummy Mask'])">ĐẶT ĐƠN</button>
+                </div>
             </div>
+
             <div class="card">
-                <img src="https://i.postimg.cc/J0sRbXKs/Gummy-Mask.webp">
-                <div class="card-body"><div class="card-title">Gummy Mask</div><div class="price" style="color:#666; font-size:13px">Thương lượng</div><button class="btn-buy" onclick="openModal('boost', 'Gummy Mask', 0)">ĐẶT ĐƠN</button></div>
+                <img src="https://i.postimg.cc/fRFvwQS5/Picsart-26-01-30-13-23-20-403.png">
+                <div class="card-body">
+                    <div class="card-title">Endgame Tools</div>
+                    <div class="price" style="color:#666; font-size:13px">Thương lượng</div>
+                    <button class="btn-buy" onclick="openModal('boost', 'Endgame Tool', 0, ['Dark Scythe', 'Tide Popper', 'Gummyballer'])">ĐẶT ĐƠN</button>
+                </div>
             </div>
+
             <div class="card">
-                <img src="https://i.postimg.cc/PqfJCCG9/static-assets-upload12265840429838700596.webp">
-                <div class="card-body"><div class="card-title">Honey Mask</div><div class="price" style="color:#666; font-size:13px">Thương lượng</div><button class="btn-buy" onclick="openModal('boost', 'Honey Mask', 0)">ĐẶT ĐƠN</button></div>
+                <img src="https://i.postimg.cc/cJtjMmNY/Screenshot-20260130-123550-Discord.jpg">
+                <div class="card-body">
+                    <div class="card-title">Honeycomb Belt</div>
+                    <div class="price" style="color:#666; font-size:13px">Thương lượng</div>
+                    <button class="btn-buy" onclick="openModal('boost', 'Honeycomb Belt', 0)">ĐẶT ĐƠN</button>
+                </div>
             </div>
+
             <div class="card"><img src="https://i.postimg.cc/0QmTxCtT/images-(17).jpg"><div class="card-body"><div class="card-title">Coconut Clogs</div><div class="price" style="color:#666; font-size:13px">Thương lượng</div><button class="btn-buy" onclick="openModal('boost', 'Coconut Clogs', 0)">ĐẶT ĐƠN</button></div></div>
              <div class="card"><img src="https://i.postimg.cc/C1jQ9x5p/Screenshot-20260130-123640-Discord.jpg"><div class="card-body"><div class="card-title">Gummy Boots</div><div class="price" style="color:#666; font-size:13px">Thương lượng</div><button class="btn-buy" onclick="openModal('boost', 'Gummy Boots', 0)">ĐẶT ĐƠN</button></div></div>
              <div class="card"><img src="https://i.postimg.cc/0jj7DVLC/Screenshot-20260130-125715-Discord.jpg"><div class="card-body"><div class="card-title">Guards (Cobalt/Crimson)</div><div class="price" style="color:#666; font-size:13px">Thương lượng</div><button class="btn-buy" onclick="openModal('boost', 'Guards', 0, ['Cobalt Guard', 'Crimson Guard'])">ĐẶT ĐƠN</button></div></div>
-             <div class="card"><img src="https://i.postimg.cc/cJtjMmNY/Screenshot-20260130-123550-Discord.jpg"><div class="card-body"><div class="card-title">Petal Belt</div><div class="price" style="color:#666; font-size:13px">Thương lượng</div><button class="btn-buy" onclick="openModal('boost', 'Petal Belt', 0)">ĐẶT ĐƠN</button></div></div>
+             <div class="card"><img src="https://i.postimg.cc/B6Vj94VB/images-(18).jpg"><div class="card-body"><div class="card-title">Vicious Bee</div><div class="price" style="color:#666; font-size:13px">Thương lượng</div><button class="btn-buy" onclick="openModal('boost', 'Vicious Bee', 0)">ĐẶT ĐƠN</button></div></div>
+             <div class="card"><img src="https://i.postimg.cc/pVmZ9TxS/Gummy-Bee.webp"><div class="card-body"><div class="card-title">Gummy Bee</div><div class="price" style="color:#666; font-size:13px">Thương lượng</div><button class="btn-buy" onclick="openModal('boost', 'Gummy Bee', 0)">ĐẶT ĐƠN</button></div></div>
         </div>
     </div>
 
@@ -84,14 +92,11 @@
             <h3 style="text-align:center; margin-bottom:15px" id="modalTitle">...</h3>
             <p>Vật phẩm: <b id="mName">...</b></p>
             <p id="priceRow" style="margin-bottom:10px">Giá: <b id="mPrice" style="color:red">...</b></p>
-            
-            <div id="variantArea" class="variant-group" style="display:none"></div>
+            <div id="variantArea" class="variant-group" style="display:none; flex-wrap:wrap"></div>
             <input type="text" id="accUser" class="input-box" placeholder="Username Roblox...">
-            
             <div id="boostArea" style="display:none">
                 <input type="password" id="accPass" class="input-box" placeholder="Mật khẩu...">
                 <textarea id="materialNote" class="input-box" style="height:60px" placeholder="Số lượng nguyên liệu & tiền hiện có..."></textarea>
-                
                 <div class="upload-btn-wrapper">
                     <button class="btn-upload" id="uploadBtnText"><i class="fa-solid fa-camera"></i> Chọn ảnh tổ ong</button>
                     <input type="file" id="hiveImg" accept="image/*" onchange="compressImage(this)">
@@ -101,7 +106,6 @@
                 </div>
                 <div style="font-size:11px; background:#eff6ff; padding:10px; border-radius:8px; color:#3b82f6">Dựa vào tình trạng acc sẽ báo giá sau.</div>
             </div>
-
             <button class="btn-primary" onclick="processOrder()">XÁC NHẬN</button>
             <button onclick="document.getElementById('buyModal').style.display='none'" style="width:100%; border:none; background:none; margin-top:10px; color:#888">Hủy</button>
         </div>
@@ -145,12 +149,11 @@
                 const vArea = document.getElementById('variantArea'); vArea.innerHTML = '';
                 if(variants.length > 0) {
                     vArea.style.display = 'flex';
-                    variants.forEach(v => { vArea.innerHTML += `<div class="variant-btn" onclick="selectVar(this, '${v}')">${v}</div>`; });
+                    variants.forEach(v => { vArea.innerHTML += `<div class="variant-btn" onclick="selectVar(this, '${v}')" style="min-width:30%">${v}</div>`; });
                 } else { vArea.style.display = 'none'; }
             }
         }
 
-        // NÉN ẢNH ĐỂ GỬI ĐƯỢC CHO ADMIN
         function compressImage(input) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
@@ -160,16 +163,15 @@
                     img.onload = function() {
                         const canvas = document.createElement('canvas');
                         const ctx = canvas.getContext('2d');
-                        const maxWidth = 300; // Nén nhỏ lại width 300px
+                        const maxWidth = 300; 
                         const scaleSize = maxWidth / img.width;
                         canvas.width = maxWidth;
                         canvas.height = img.height * scaleSize;
                         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                        finalBase64 = canvas.toDataURL('image/jpeg', 0.7); // Chất lượng 70%
-                        
+                        finalBase64 = canvas.toDataURL('image/jpeg', 0.7);
                         document.getElementById('imgPreview').src = finalBase64;
                         document.getElementById('previewArea').style.display = 'block';
-                        document.getElementById('uploadBtnText').innerText = "Đã nén ảnh thành công!";
+                        document.getElementById('uploadBtnText').innerText = "Đã nén ảnh!";
                     }
                 };
                 reader.readAsDataURL(input.files[0]);
@@ -193,11 +195,11 @@
                 let pass = document.getElementById('accPass').value;
                 let note = document.getElementById('materialNote').value;
                 if(!acc || !pass) return alert("Thiếu Acc/Pass!");
-                if(document.getElementById('variantArea').style.display !== 'none' && !selectedVariant) return alert("Chọn loại mask/tool!");
+                if(document.getElementById('variantArea').style.display !== 'none' && !selectedVariant) return alert("Chọn loại vật phẩm!");
                 
                 let finalName = selectedVariant ? `${currentItem.name} (${selectedVariant})` : currentItem.name;
                 saveOrder(finalName, 0, acc, pass, "Đang xét giá", note, "boost");
-                alert("Đã gửi đơn! Kiểm tra chuông thông báo để nhận giá.");
+                alert("Đã gửi đơn! Kiểm tra chuông thông báo.");
                 document.getElementById('buyModal').style.display = 'none';
             }
         }
@@ -207,46 +209,30 @@
             let history = JSON.parse(localStorage.getItem('myHistory')) || [];
             history.unshift({
                 id: 'GS' + Math.floor(Math.random() * 90000),
-                type: type, // 'gamepass' hoặc 'boost'
-                service: name, price: price, acc: acc, pass: pass, note: note,
-                img: finalBase64, // Lưu ảnh đã nén
-                date: new Date().toLocaleString(), status: status
+                type: type, service: name, price: price, acc: acc, pass: pass, note: note,
+                img: finalBase64, date: new Date().toLocaleString(), status: status
             });
             localStorage.setItem('myHistory', JSON.stringify(history));
         }
 
-        // HỆ THỐNG CHUÔNG THÔNG BÁO
         function toggleNotif() {
             const box = document.getElementById('notif-box');
             box.style.display = (box.style.display === 'block') ? 'none' : 'block';
-            checkBell(); // Load lại tin nhắn
+            checkBell();
         }
 
         setInterval(checkBell, 2000);
         function checkBell() {
             let history = JSON.parse(localStorage.getItem('myHistory')) || [];
             let pendingConfirm = history.filter(h => h.status === "Chờ xác nhận");
-            
-            // Hiện chấm đỏ
             document.getElementById('bell-dot').style.display = pendingConfirm.length > 0 ? 'block' : 'none';
-            
-            // Render nội dung
             const contentBox = document.getElementById('notif-content');
             contentBox.innerHTML = '';
             if(pendingConfirm.length === 0) {
-                contentBox.innerHTML = '<p style="text-align:center; color:#999; font-size:12px">Không có thông báo mới.</p>';
+                contentBox.innerHTML = '<p style="text-align:center; color:#999; font-size:12px">Không có thông báo.</p>';
             } else {
                 pendingConfirm.forEach(h => {
-                    contentBox.innerHTML += `
-                        <div class="notif-item">
-                            <b>Admin báo giá:</b> ${h.service}<br>
-                            Giá: <b style="color:red">${h.price.toLocaleString()}đ</b>
-                            <div style="display:flex; gap:5px">
-                                <button class="notif-btn" style="background:#22c55e" onclick="replyPrice('${h.id}', true)">Đồng ý</button>
-                                <button class="notif-btn" style="background:#ef4444" onclick="replyPrice('${h.id}', false)">Hủy</button>
-                            </div>
-                        </div>
-                    `;
+                    contentBox.innerHTML += `<div class="notif-item"><b>Admin báo giá:</b> ${h.service}<br>Giá: <b style="color:red">${h.price.toLocaleString()}đ</b><div style="display:flex; gap:5px"><button class="notif-btn" style="background:#22c55e" onclick="replyPrice('${h.id}', true)">Đồng ý</button><button class="notif-btn" style="background:#ef4444" onclick="replyPrice('${h.id}', false)">Hủy</button></div></div>`;
                 });
             }
         }
@@ -260,8 +246,8 @@
                         balance -= history[idx].price;
                         localStorage.setItem('myBalance', balance);
                         history[idx].status = "Đang xử lý";
-                        alert("Đã chốt đơn! Admin sẽ cày ngay.");
-                    } else { return alert("Không đủ tiền! Nạp thêm đi bạn."); }
+                        alert("Đã chốt đơn!");
+                    } else { return alert("Không đủ tiền!"); }
                 } else {
                     history[idx].status = "Bị hủy";
                     alert("Đã hủy đơn.");
