@@ -11,43 +11,73 @@
     <nav class="navbar">
         <div class="container nav-inner">
             <img class="logo-img" onclick="window.location.href='index.html'" alt="GENSAI SHOP">
+            
             <div style="display:flex; align-items:center;">
                 <div class="bell-wrapper" onclick="toggleNotif()">
                     <i class="fa-solid fa-bell"></i>
                     <div id="bell-dot" class="bell-dot"></div>
                     <div id="notif-box" class="notif-box">
-                        <h4 style="margin-bottom:10px; font-size:14px">Thông Báo</h4>
+                        <h4 style="margin-bottom:10px; font-size:14px; color:#333;">Thông Báo</h4>
                         <div id="notif-content"></div>
                     </div>
                 </div>
                 <div class="menu-toggle" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></div>
             </div>
+            
             <div class="mobile-menu" id="mainMenu"></div>
         </div>
     </nav>
 
     <div class="container">
         <div style="margin-top:20px; display:flex; justify-content:space-between; align-items:center">
-            <h3 style="font-size:16px">Chào, <span id="uName" style="color:#3b82f6">...</span></h3>
-            <div style="font-size:14px; font-weight:bold">Số dư: <span id="uBal" style="color:#22c55e">0</span>đ</div>
+            <h3 style="font-size:16px; color:#fff">Chào, <span id="uName" style="color:#3b82f6">...</span></h3>
+            <div style="font-size:14px; font-weight:bold; color:#fff">Số dư: <span id="uBal" style="color:#22c55e">0</span>đ</div>
         </div>
 
         <div class="section-header"><i class="fa-solid fa-ticket"></i> Mua Gamepass</div>
         <div class="grid">
-            <div class="card"><img src="https://i.postimg.cc/7Lrp7X49/tum-voucherler-bee-swarm-13751871.png"><div class="card-body"><div class="card-title">Bear Bee Voucher</div><div class="price">120.000đ</div><button class="btn-buy" onclick="openModal('gamepass', 'Bear Bee Voucher', 120000)">MUA NGAY</button></div></div>
-            <div class="card"><img src="https://i.postimg.cc/3wZbGT9c/tum-voucherler-bee-swarm-13751871-1.png"><div class="card-body"><div class="card-title">Cub Buddy Voucher</div><div class="price">80.000đ</div><button class="btn-buy" onclick="openModal('gamepass', 'Cub Buddy Voucher', 80000)">MUA NGAY</button></div></div>
-            <div class="card"><img src="https://i.postimg.cc/Px336Qg7/tum-voucherler-bee-swarm-13751871-2.png"><div class="card-body"><div class="card-title">x2 Bee Gather</div><div class="price">60.000đ</div><button class="btn-buy" onclick="openModal('gamepass', 'x2 Bee Gather', 60000)">MUA NGAY</button></div></div>
-            <div class="card"><img src="https://i.postimg.cc/WpyYgS6N/tum-voucherler-bee-swarm-13751871-3.png"><div class="card-body"><div class="card-title">x2 Convert Speed</div><div class="price">60.000đ</div><button class="btn-buy" onclick="openModal('gamepass', 'x2 Convert Speed', 60000)">MUA NGAY</button></div></div>
+            <div class="card">
+                <img src="https://i.postimg.cc/7Lrp7X49/tum-voucherler-bee-swarm-13751871.png">
+                <div class="card-body">
+                    <div class="card-title">Bear Bee Voucher</div>
+                    <div class="price">120.000đ</div>
+                    <button class="btn-buy" onclick="openModal('gamepass', 'Bear Bee Voucher', 120000)">MUA NGAY</button>
+                </div>
+            </div>
+            <div class="card">
+                <img src="https://i.postimg.cc/3wZbGT9c/tum-voucherler-bee-swarm-13751871-1.png">
+                <div class="card-body">
+                    <div class="card-title">Cub Buddy Voucher</div>
+                    <div class="price">80.000đ</div>
+                    <button class="btn-buy" onclick="openModal('gamepass', 'Cub Buddy Voucher', 80000)">MUA NGAY</button>
+                </div>
+            </div>
+            <div class="card">
+                <img src="https://i.postimg.cc/Px336Qg7/tum-voucherler-bee-swarm-13751871-2.png">
+                <div class="card-body">
+                    <div class="card-title">x2 Bee Gather</div>
+                    <div class="price">60.000đ</div>
+                    <button class="btn-buy" onclick="openModal('gamepass', 'x2 Bee Gather', 60000)">MUA NGAY</button>
+                </div>
+            </div>
+            <div class="card">
+                <img src="https://i.postimg.cc/WpyYgS6N/tum-voucherler-bee-swarm-13751871-3.png">
+                <div class="card-body">
+                    <div class="card-title">x2 Convert Speed</div>
+                    <div class="price">60.000đ</div>
+                    <button class="btn-buy" onclick="openModal('gamepass', 'x2 Convert Speed', 60000)">MUA NGAY</button>
+                </div>
+            </div>
         </div>
 
         <div class="section-header" style="border-left-color: #3b82f6;"><i class="fa-solid fa-shield-halved"></i> Dịch vụ Cày Thuê</div>
         <div class="grid">
             
             <div class="card">
-                <img src="https://i.postimg.cc/Y9Sn9zqD/Screenshot-20260130-123045-Discord.jpg">
+                <img src="https://i.postimg.cc/52vXFhkp/Picsart-26-01-30-13-32-27-533.png">
                 <div class="card-body">
                     <div class="card-title">Basic Masks</div>
-                    <div class="price" style="color:#666; font-size:13px">Thương lượng</div>
+                    <div class="price" style="color:#ef4444; font-size:13px">Thương lượng</div>
                     <button class="btn-buy" onclick="openModal('boost', 'Basic Mask', 0, ['Honey Mask', 'Fire Mask', 'Bubble Mask'])">ĐẶT ĐƠN</button>
                 </div>
             </div>
@@ -56,7 +86,7 @@
                 <img src="https://i.postimg.cc/d0LSB9rp/Picsart-26-01-30-13-27-53-922.png">
                 <div class="card-body">
                     <div class="card-title">Advanced Masks</div>
-                    <div class="price" style="color:#666; font-size:13px">Thương lượng</div>
+                    <div class="price" style="color:#ef4444; font-size:13px">Thương lượng</div>
                     <button class="btn-buy" onclick="openModal('boost', 'Advanced Mask', 0, ['Evil Mask', 'Diamond Mask', 'Gummy Mask'])">ĐẶT ĐƠN</button>
                 </div>
             </div>
@@ -65,7 +95,7 @@
                 <img src="https://i.postimg.cc/fRFvwQS5/Picsart-26-01-30-13-23-20-403.png">
                 <div class="card-body">
                     <div class="card-title">Endgame Tools</div>
-                    <div class="price" style="color:#666; font-size:13px">Thương lượng</div>
+                    <div class="price" style="color:#ef4444; font-size:13px">Thương lượng</div>
                     <button class="btn-buy" onclick="openModal('boost', 'Endgame Tool', 0, ['Dark Scythe', 'Tide Popper', 'Gummyballer'])">ĐẶT ĐƠN</button>
                 </div>
             </div>
@@ -74,62 +104,128 @@
                 <img src="https://i.postimg.cc/cJtjMmNY/Screenshot-20260130-123550-Discord.jpg">
                 <div class="card-body">
                     <div class="card-title">Honeycomb Belt</div>
-                    <div class="price" style="color:#666; font-size:13px">Thương lượng</div>
+                    <div class="price" style="color:#ef4444; font-size:13px">Thương lượng</div>
                     <button class="btn-buy" onclick="openModal('boost', 'Honeycomb Belt', 0)">ĐẶT ĐƠN</button>
                 </div>
             </div>
 
-            <div class="card"><img src="https://i.postimg.cc/0QmTxCtT/images-(17).jpg"><div class="card-body"><div class="card-title">Coconut Clogs</div><div class="price" style="color:#666; font-size:13px">Thương lượng</div><button class="btn-buy" onclick="openModal('boost', 'Coconut Clogs', 0)">ĐẶT ĐƠN</button></div></div>
-             <div class="card"><img src="https://i.postimg.cc/C1jQ9x5p/Screenshot-20260130-123640-Discord.jpg"><div class="card-body"><div class="card-title">Gummy Boots</div><div class="price" style="color:#666; font-size:13px">Thương lượng</div><button class="btn-buy" onclick="openModal('boost', 'Gummy Boots', 0)">ĐẶT ĐƠN</button></div></div>
-             <div class="card"><img src="https://i.postimg.cc/0jj7DVLC/Screenshot-20260130-125715-Discord.jpg"><div class="card-body"><div class="card-title">Guards (Cobalt/Crimson)</div><div class="price" style="color:#666; font-size:13px">Thương lượng</div><button class="btn-buy" onclick="openModal('boost', 'Guards', 0, ['Cobalt Guard', 'Crimson Guard'])">ĐẶT ĐƠN</button></div></div>
-             <div class="card"><img src="https://i.postimg.cc/B6Vj94VB/images-(18).jpg"><div class="card-body"><div class="card-title">Vicious Bee</div><div class="price" style="color:#666; font-size:13px">Thương lượng</div><button class="btn-buy" onclick="openModal('boost', 'Vicious Bee', 0)">ĐẶT ĐƠN</button></div></div>
-             <div class="card"><img src="https://i.postimg.cc/pVmZ9TxS/Gummy-Bee.webp"><div class="card-body"><div class="card-title">Gummy Bee</div><div class="price" style="color:#666; font-size:13px">Thương lượng</div><button class="btn-buy" onclick="openModal('boost', 'Gummy Bee', 0)">ĐẶT ĐƠN</button></div></div>
+            <div class="card">
+                <img src="https://i.postimg.cc/0QmTxCtT/images-(17).jpg">
+                <div class="card-body">
+                    <div class="card-title">Coconut Clogs</div>
+                    <div class="price" style="color:#ef4444; font-size:13px">Thương lượng</div>
+                    <button class="btn-buy" onclick="openModal('boost', 'Coconut Clogs', 0)">ĐẶT ĐƠN</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <img src="https://i.postimg.cc/C1jQ9x5p/Screenshot-20260130-123640-Discord.jpg">
+                <div class="card-body">
+                    <div class="card-title">Gummy Boots</div>
+                    <div class="price" style="color:#ef4444; font-size:13px">Thương lượng</div>
+                    <button class="btn-buy" onclick="openModal('boost', 'Gummy Boots', 0)">ĐẶT ĐƠN</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <img src="https://i.postimg.cc/0jj7DVLC/Screenshot-20260130-125715-Discord.jpg">
+                <div class="card-body">
+                    <div class="card-title">Guards (Cobalt/Crimson)</div>
+                    <div class="price" style="color:#ef4444; font-size:13px">Thương lượng</div>
+                    <button class="btn-buy" onclick="openModal('boost', 'Guards', 0, ['Cobalt Guard', 'Crimson Guard'])">ĐẶT ĐƠN</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <img src="https://i.postimg.cc/B6Vj94VB/images-(18).jpg">
+                <div class="card-body">
+                    <div class="card-title">Vicious Bee</div>
+                    <div class="price" style="color:#ef4444; font-size:13px">Thương lượng</div>
+                    <button class="btn-buy" onclick="openModal('boost', 'Vicious Bee', 0)">ĐẶT ĐƠN</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <img src="https://i.postimg.cc/pVmZ9TxS/Gummy-Bee.webp">
+                <div class="card-body">
+                    <div class="card-title">Gummy Bee</div>
+                    <div class="price" style="color:#ef4444; font-size:13px">Thương lượng</div>
+                    <button class="btn-buy" onclick="openModal('boost', 'Gummy Bee', 0)">ĐẶT ĐƠN</button>
+                </div>
+            </div>
         </div>
     </div>
 
     <div id="buyModal" class="modal">
         <div class="modal-content">
-            <h3 style="text-align:center; margin-bottom:15px" id="modalTitle">...</h3>
+            <h3 style="text-align:center; margin-bottom:15px; color:#fff" id="modalTitle">...</h3>
             <p>Vật phẩm: <b id="mName">...</b></p>
             <p id="priceRow" style="margin-bottom:10px">Giá: <b id="mPrice" style="color:red">...</b></p>
-            <div id="variantArea" class="variant-group" style="display:none; flex-wrap:wrap"></div>
+            
+            <div id="variantArea" class="variant-group" style="display:none"></div>
+            
             <input type="text" id="accUser" class="input-box" placeholder="Username Roblox...">
+            
             <div id="boostArea" style="display:none">
-                <input type="password" id="accPass" class="input-box" placeholder="Mật khẩu...">
-                <textarea id="materialNote" class="input-box" style="height:60px" placeholder="Số lượng nguyên liệu & tiền hiện có..."></textarea>
+                <input type="password" id="accPass" class="input-box" placeholder="Mật khẩu (Bắt buộc)...">
+                <label style="font-size:13px; font-weight:bold; display:block; margin:10px 0 5px">Nguyên liệu & Tiền hiện có:</label>
+                <textarea id="materialNote" class="input-box" style="height:60px" placeholder="Ví dụ: Đủ nl, 500 tỷ honey..."></textarea>
+                
                 <div class="upload-btn-wrapper">
                     <button class="btn-upload" id="uploadBtnText"><i class="fa-solid fa-camera"></i> Chọn ảnh tổ ong</button>
                     <input type="file" id="hiveImg" accept="image/*" onchange="compressImage(this)">
                 </div>
+                
                 <div id="previewArea" style="display:none; text-align:center; margin-bottom:10px">
-                    <img id="imgPreview" style="max-height:80px; border:1px solid #ddd">
+                    <img id="imgPreview" style="max-height:80px; border:1px solid #444; border-radius:8px">
                 </div>
-                <div style="font-size:11px; background:#eff6ff; padding:10px; border-radius:8px; color:#3b82f6">Dựa vào tình trạng acc sẽ báo giá sau.</div>
+
+                <div style="font-size:11px; background:#222; padding:10px; border-radius:8px; color:#aaa; border:1px solid #333">
+                    <i class="fa-solid fa-circle-info"></i> Dựa vào tình trạng acc, Admin sẽ báo giá lại sau.
+                </div>
             </div>
+
             <button class="btn-primary" onclick="processOrder()">XÁC NHẬN</button>
-            <button onclick="document.getElementById('buyModal').style.display='none'" style="width:100%; border:none; background:none; margin-top:10px; color:#888">Hủy</button>
+            <button onclick="document.getElementById('buyModal').style.display='none'" style="width:100%; border:none; background:none; margin-top:10px; color:#888; cursor:pointer">Hủy</button>
         </div>
     </div>
 
     <script>
+        // 1. KIỂM TRA ĐĂNG NHẬP
         if(!localStorage.getItem('isLoggedIn')) window.location.href = 'login.html';
         const uName = localStorage.getItem('myUser');
         const menuBox = document.getElementById('mainMenu');
-        menuBox.innerHTML = `<div style="padding:10px; font-size:12px; color:#888; border-bottom:1px solid #eee">Acc: <b>${uName}</b></div><a href="index.html" class="menu-item">Trang chủ</a><a href="dashboard.html" class="menu-item">Shop</a><a href="deposit.html" class="menu-item">Nạp Tiền</a><a href="history.html" class="menu-item">Lịch Sử</a><a href="#" onclick="doLogout()" class="menu-item logout">Đăng xuất</a>`;
+        
+        // 2. MENU
+        menuBox.innerHTML = `
+            <div style="padding:10px; font-size:12px; color:#888; border-bottom:1px solid #333">Acc: <b>${uName}</b></div>
+            <a href="index.html" class="menu-item">Trang chủ</a>
+            <a href="dashboard.html" class="menu-item">Shop Vật Phẩm</a>
+            <a href="deposit.html" class="menu-item">Nạp Tiền</a>
+            <a href="history.html" class="menu-item">Lịch Sử Đơn</a>
+            <a href="#" onclick="doLogout()" class="menu-item logout" style="color:#ef4444">Đăng xuất</a>
+        `;
         function toggleMenu() { menuBox.classList.toggle('active'); }
         function doLogout() { localStorage.removeItem('isLoggedIn'); window.location.href = 'index.html'; }
 
+        // 3. HIỂN THỊ SỐ DƯ
         let balance = parseInt(localStorage.getItem('myBalance')) || 0;
         document.getElementById('uName').innerText = uName;
         document.getElementById('uBal').innerText = balance.toLocaleString();
 
         let currentItem = {}, selectedVariant = "", finalBase64 = "";
 
+        // 4. MỞ MODAL
         function openModal(type, name, price, variants = []) {
-            currentItem = { type, name, price }; selectedVariant = ""; finalBase64 = "";
+            currentItem = { type, name, price }; 
+            selectedVariant = ""; 
+            finalBase64 = "";
+            
             document.getElementById('mName').innerText = name;
             document.getElementById('accUser').value = "";
             document.getElementById('buyModal').style.display = 'flex';
+            
+            // Reset Form Upload
             document.getElementById('hiveImg').value = "";
             document.getElementById('uploadBtnText').innerHTML = '<i class="fa-solid fa-camera"></i> Chọn ảnh tổ ong';
             document.getElementById('previewArea').style.display = 'none';
@@ -146,14 +242,19 @@
                 document.getElementById('accPass').value = "";
                 document.getElementById('materialNote').value = "";
                 document.getElementById('modalTitle').innerText = "ĐẶT CÀY THUÊ";
-                const vArea = document.getElementById('variantArea'); vArea.innerHTML = '';
+                
+                const vArea = document.getElementById('variantArea'); 
+                vArea.innerHTML = '';
                 if(variants.length > 0) {
                     vArea.style.display = 'flex';
-                    variants.forEach(v => { vArea.innerHTML += `<div class="variant-btn" onclick="selectVar(this, '${v}')" style="min-width:30%">${v}</div>`; });
+                    variants.forEach(v => { 
+                        vArea.innerHTML += `<div class="variant-btn" onclick="selectVar(this, '${v}')">${v}</div>`; 
+                    });
                 } else { vArea.style.display = 'none'; }
             }
         }
 
+        // 5. XỬ LÝ NÉN ẢNH
         function compressImage(input) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
@@ -169,9 +270,10 @@
                         canvas.height = img.height * scaleSize;
                         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                         finalBase64 = canvas.toDataURL('image/jpeg', 0.7);
+                        
                         document.getElementById('imgPreview').src = finalBase64;
                         document.getElementById('previewArea').style.display = 'block';
-                        document.getElementById('uploadBtnText').innerText = "Đã nén ảnh!";
+                        document.getElementById('uploadBtnText').innerText = "Đã nén ảnh thành công!";
                     }
                 };
                 reader.readAsDataURL(input.files[0]);
@@ -180,26 +282,33 @@
 
         function selectVar(el, val) {
             document.querySelectorAll('.variant-btn').forEach(b => b.classList.remove('selected'));
-            el.classList.add('selected'); selectedVariant = val;
+            el.classList.add('selected'); 
+            selectedVariant = val;
         }
 
+        // 6. XỬ LÝ ĐẶT HÀNG
         function processOrder() {
             let acc = document.getElementById('accUser').value;
+            
             if(currentItem.type === 'gamepass') {
-                if(!acc) return alert("Thiếu tên tài khoản!");
+                if(!acc) return alert("Vui lòng nhập Username!");
                 if(balance < currentItem.price) return alert("Không đủ tiền!");
+                
                 balance -= currentItem.price;
                 saveOrder(currentItem.name, currentItem.price, acc, "Không cần", "Thành công", "", "gamepass");
-                alert("Mua thành công!"); window.location.reload();
+                alert("Mua thành công!"); 
+                window.location.reload();
             } else {
                 let pass = document.getElementById('accPass').value;
                 let note = document.getElementById('materialNote').value;
-                if(!acc || !pass) return alert("Thiếu Acc/Pass!");
-                if(document.getElementById('variantArea').style.display !== 'none' && !selectedVariant) return alert("Chọn loại vật phẩm!");
+                
+                if(!acc || !pass) return alert("Vui lòng nhập Tài khoản và Mật khẩu!");
+                if(document.getElementById('variantArea').style.display !== 'none' && !selectedVariant) return alert("Vui lòng chọn loại vật phẩm!");
                 
                 let finalName = selectedVariant ? `${currentItem.name} (${selectedVariant})` : currentItem.name;
                 saveOrder(finalName, 0, acc, pass, "Đang xét giá", note, "boost");
-                alert("Đã gửi đơn! Kiểm tra chuông thông báo.");
+                
+                alert("Đã gửi đơn! Vui lòng theo dõi chuông thông báo để nhận báo giá.");
                 document.getElementById('buyModal').style.display = 'none';
             }
         }
@@ -209,30 +318,51 @@
             let history = JSON.parse(localStorage.getItem('myHistory')) || [];
             history.unshift({
                 id: 'GS' + Math.floor(Math.random() * 90000),
-                type: type, service: name, price: price, acc: acc, pass: pass, note: note,
-                img: finalBase64, date: new Date().toLocaleString(), status: status
+                type: type, 
+                service: name, 
+                price: price, 
+                acc: acc, 
+                pass: pass, 
+                note: note,
+                img: finalBase64, 
+                date: new Date().toLocaleString(), 
+                status: status
             });
             localStorage.setItem('myHistory', JSON.stringify(history));
         }
 
+        // 7. HỆ THỐNG THÔNG BÁO (CHUÔNG)
         function toggleNotif() {
             const box = document.getElementById('notif-box');
             box.style.display = (box.style.display === 'block') ? 'none' : 'block';
             checkBell();
         }
 
-        setInterval(checkBell, 2000);
+        setInterval(checkBell, 2000); // Check mỗi 2 giây
         function checkBell() {
             let history = JSON.parse(localStorage.getItem('myHistory')) || [];
             let pendingConfirm = history.filter(h => h.status === "Chờ xác nhận");
+            
+            // Hiện chấm đỏ nếu có tin mới
             document.getElementById('bell-dot').style.display = pendingConfirm.length > 0 ? 'block' : 'none';
+            
             const contentBox = document.getElementById('notif-content');
             contentBox.innerHTML = '';
+            
             if(pendingConfirm.length === 0) {
-                contentBox.innerHTML = '<p style="text-align:center; color:#999; font-size:12px">Không có thông báo.</p>';
+                contentBox.innerHTML = '<p style="text-align:center; color:#999; font-size:12px">Không có thông báo mới.</p>';
             } else {
                 pendingConfirm.forEach(h => {
-                    contentBox.innerHTML += `<div class="notif-item"><b>Admin báo giá:</b> ${h.service}<br>Giá: <b style="color:red">${h.price.toLocaleString()}đ</b><div style="display:flex; gap:5px"><button class="notif-btn" style="background:#22c55e" onclick="replyPrice('${h.id}', true)">Đồng ý</button><button class="notif-btn" style="background:#ef4444" onclick="replyPrice('${h.id}', false)">Hủy</button></div></div>`;
+                    contentBox.innerHTML += `
+                        <div class="notif-item">
+                            <b>Admin báo giá:</b> ${h.service}<br>
+                            Giá chốt: <b style="color:#ef4444">${h.price.toLocaleString()}đ</b>
+                            <div style="display:flex; gap:5px">
+                                <button class="notif-btn" style="background:#22c55e" onclick="replyPrice('${h.id}', true)">Đồng ý làm</button>
+                                <button class="notif-btn" style="background:#ef4444" onclick="replyPrice('${h.id}', false)">Hủy đơn</button>
+                            </div>
+                        </div>
+                    `;
                 });
             }
         }
@@ -240,17 +370,20 @@
         function replyPrice(id, isAgree) {
             let history = JSON.parse(localStorage.getItem('myHistory'));
             let idx = history.findIndex(h => h.id === id);
+            
             if(idx !== -1) {
                 if(isAgree) {
                     if(balance >= history[idx].price) {
                         balance -= history[idx].price;
                         localStorage.setItem('myBalance', balance);
                         history[idx].status = "Đang xử lý";
-                        alert("Đã chốt đơn!");
-                    } else { return alert("Không đủ tiền!"); }
+                        alert("Đã chốt đơn! Admin sẽ vào cày ngay.");
+                    } else { 
+                        return alert("Số dư không đủ! Vui lòng nạp thêm tiền."); 
+                    }
                 } else {
                     history[idx].status = "Bị hủy";
-                    alert("Đã hủy đơn.");
+                    alert("Đã hủy đơn hàng.");
                 }
                 localStorage.setItem('myHistory', JSON.stringify(history));
                 checkBell();
@@ -258,7 +391,12 @@
                 window.location.reload();
             }
         }
-        document.addEventListener('click', function(e) { if (!e.target.closest('.bell-wrapper')) document.getElementById('notif-box').style.display = 'none'; });
+
+        // Đóng khi click ngoài
+        document.addEventListener('click', function(e) { 
+            if (!e.target.closest('.bell-wrapper')) document.getElementById('notif-box').style.display = 'none'; 
+            if (!e.target.closest('.menu-toggle') && !e.target.closest('.mobile-menu')) document.getElementById('mainMenu').classList.remove('active');
+        });
     </script>
 </body>
 </html>
