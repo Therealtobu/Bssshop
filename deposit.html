@@ -1,84 +1,223 @@
-// --- SCRIPT NẠP THẺ TỰ ĐỘNG (Dán vào deposit.html) ---
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Nạp Tiền - GENSAISHOP</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container nav-inner">
+            <img class="logo-img" onclick="window.location.href='index.html'" alt="GENSAI SHOP">
+            <div style="display:flex; align-items:center;">
+                <div class="bell-wrapper" onclick="toggleNotif()">
+                    <i class="fa-solid fa-bell"></i>
+                    <div id="bell-dot" class="bell-dot"></div>
+                    <div id="notif-box" class="notif-box">
+                        <h4 style="margin-bottom:10px; font-size:14px; color:#fff">Thông Báo</h4>
+                        <div id="notif-content"></div>
+                    </div>
+                </div>
+                <div class="menu-toggle" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></div>
+            </div>
+            <div class="mobile-menu" id="mainMenu"></div>
+        </div>
+    </nav>
 
-// Thay cái này bằng Link Render của bạn (bỏ dấu / ở cuối nếu có)
-const BACKEND_URL = "https://gensai-backend.onrender.com"; 
-
-async function sendCardToAPI() {
-    const type = document.getElementById('cardType').value;
-    const amount = document.getElementById('cardAmount').value;
-    const seri = document.getElementById('cardSeri').value;
-    const pin = document.getElementById('cardPin').value;
-    const uName = localStorage.getItem('myUser');
-
-    if(!type || !amount || !seri || !pin) return alert("Vui lòng nhập đầy đủ thông tin!");
-
-    const btn = document.querySelector('.btn-primary');
-    const oldText = btn.innerText;
-    btn.innerText = "Đang kết nối Server...";
-    btn.disabled = true;
-
-    try {
-        // 1. Gửi thẻ lên Server
-        const res = await fetch(`${BACKEND_URL}/api/deposit`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ type, amount, serial: seri, pin, username: uName })
-        });
-        const data = await res.json();
-
-        if(data.status === 1) {
-            // 2. Server đã nhận, bắt đầu chế độ chờ kết quả
-            const reqId = data.request_id;
-            let dotCount = 0;
+    <div class="container">
+        <div class="auth-box" style="max-width:600px; margin-top:30px">
+            <h3 style="text-align:center; margin-bottom:25px; text-transform:uppercase; letter-spacing:1px; color:#fff">Nạp Số Dư</h3>
             
-            // Hàm kiểm tra liên tục mỗi 3 giây
-            let checkInterval = setInterval(async () => {
-                dotCount = (dotCount + 1) % 4;
-                btn.innerText = "Đang duyệt thẻ" + ".".repeat(dotCount);
+            <div class="tab-header">
+                <div id="tab1" class="tab-btn active" onclick="switchTab('bank')">CHUYỂN KHOẢN</div>
+                <div id="tab2" class="tab-btn" onclick="switchTab('card')">THẺ CÀO (AUTO)</div>
+                <div id="tab3" class="tab-btn" onclick="switchTab('code')">NHẬP CODE</div>
+            </div>
 
-                try {
-                    const checkRes = await fetch(`${BACKEND_URL}/api/check/${reqId}`);
-                    const checkData = await checkRes.json();
+            <div id="bank-area">
+                <div style="background:#222; padding:20px; border-radius:12px; text-align:center; border:1px solid #333; margin-bottom:20px">
+                    <p style="font-size:13px; color:#aaa; margin-bottom:5px">NGÂN HÀNG MB BANK</p>
+                    <p style="font-size:24px; font-weight:800; color:#fff; margin-bottom:5px; letter-spacing:1px">0123 456 789</p>
+                    <p style="font-size:14px; color:#fff">Chủ TK: <b style="text-transform:uppercase">Nguyen Van A</b></p>
+                    <div style="margin-top:15px; background:#333; color:#fff; padding:8px; border-radius:6px; font-size:13px">
+                        Nội dung: <b>NAP GENSAI</b>
+                    </div>
+                </div>
+                <p style="text-align:center; font-size:12px; color:#666; margin-top:15px">Chuyển xong vui lòng chụp ảnh gửi Admin qua Discord/Facebook để cộng tiền.</p>
+            </div>
 
-                    if(checkData.status === 'success') {
-                        clearInterval(checkInterval);
-                        
-                        // CỘNG TIỀN
-                        let currentBal = parseInt(localStorage.getItem('myBalance')) || 0;
-                        let newBal = currentBal + checkData.amount;
-                        localStorage.setItem('myBalance', newBal);
-                        
-                        // LƯU LỊCH SỬ
-                        let h = JSON.parse(localStorage.getItem('myDepositHistory')) || [];
-                        h.unshift({ 
-                            id: reqId, amount: checkData.amount, method: type, 
-                            date: new Date().toLocaleString(), status: 'Thành công' 
-                        });
-                        localStorage.setItem('myDepositHistory', JSON.stringify(h));
+            <div id="card-area" style="display:none">
+                <select id="cardType" class="input-box" style="background:#1f1f1f; color:white">
+                    <option value="">-- Chọn loại thẻ --</option>
+                    <option value="VIETTEL">Viettel</option>
+                    <option value="VINAPHONE">Vinaphone</option>
+                    <option value="MOBIFONE">Mobifone</option>
+                    <option value="ZING">Zing</option>
+                </select>
+                <select id="cardAmount" class="input-box" style="background:#1f1f1f; color:white">
+                    <option value="">-- Chọn mệnh giá --</option>
+                    <option value="10000">10.000đ</option>
+                    <option value="20000">20.000đ</option>
+                    <option value="50000">50.000đ</option>
+                    <option value="100000">100.000đ</option>
+                    <option value="200000">200.000đ</option>
+                    <option value="500000">500.000đ</option>
+                </select>
+                <input type="text" id="cardSeri" class="input-box" placeholder="Số Seri">
+                <input type="text" id="cardPin" class="input-box" placeholder="Mã thẻ (Mã nạp)">
+                
+                <button class="btn-primary" onclick="sendCardToAPI()">NẠP THẺ NGAY</button>
+                <p style="font-size:11px; color:#aaa; margin-top:10px; text-align:center">
+                    <i class="fa-solid fa-bolt"></i> Hệ thống xử lý tự động 24/7. Vui lòng giữ thẻ cho đến khi báo thành công.
+                </p>
+            </div>
 
-                        alert(`Nạp thành công ${checkData.amount.toLocaleString()}đ!`);
-                        window.location.reload();
-                    } 
-                    else if(checkData.status === 'wrong') {
-                        clearInterval(checkInterval);
-                        alert("Thất bại: Thẻ sai hoặc đã được sử dụng!");
-                        btn.innerText = oldText;
-                        btn.disabled = false;
-                    }
-                    // Nếu status là 'pending' thì cứ để nó quay tiếp
-                } catch (e) { console.log("Đang chờ server..."); }
-            }, 3000); // 3 giây hỏi 1 lần
+            <div id="code-area" style="display:none">
+                <input type="text" id="giftCode" class="input-box" placeholder="Nhập mã Giftcode...">
+                <button class="btn-primary" onclick="redeemCode()">KÍCH HOẠT</button>
+            </div>
 
-        } else {
-            alert("Lỗi gửi thẻ: " + data.message);
-            btn.innerText = oldText;
-            btn.disabled = false;
+        </div>
+    </div>
+
+    <script>
+        if(!localStorage.getItem('isLoggedIn')) window.location.href = 'login.html';
+        const uName = localStorage.getItem('myUser');
+        const menuBox = document.getElementById('mainMenu');
+        
+        // ========================================================
+        // ⚠️ THAY LINK RENDER CỦA BẠN VÀO DÒNG DƯỚI ĐÂY
+        const BACKEND_URL = "https://gensai-backend.onrender.com"; 
+        // ========================================================
+
+        menuBox.innerHTML = `<div style="padding:10px; font-size:12px; color:#888; border-bottom:1px solid #333">Acc: <b>${uName}</b></div><a href="index.html" class="menu-item">Trang chủ</a><a href="dashboard.html" class="menu-item">Shop Vật Phẩm</a><a href="deposit.html" class="menu-item">Nạp Tiền</a><a href="history.html" class="menu-item">Lịch Sử Đơn</a><a href="#" onclick="doLogout()" class="menu-item logout" style="color:#ef4444">Đăng xuất</a>`;
+        function toggleMenu() { menuBox.classList.toggle('active'); }
+        function doLogout() { localStorage.removeItem('isLoggedIn'); window.location.href = 'index.html'; }
+
+        function switchTab(t) {
+            document.getElementById('bank-area').style.display = (t=='bank') ? 'block' : 'none';
+            document.getElementById('card-area').style.display = (t=='card') ? 'block' : 'none';
+            document.getElementById('code-area').style.display = (t=='code') ? 'block' : 'none';
+            document.getElementById('tab1').className = (t=='bank') ? 'tab-btn active' : 'tab-btn';
+            document.getElementById('tab2').className = (t=='card') ? 'tab-btn active' : 'tab-btn';
+            document.getElementById('tab3').className = (t=='code') ? 'tab-btn active' : 'tab-btn';
         }
 
-    } catch (err) {
-        console.error(err);
-        alert("Server đang khởi động (mất khoảng 1 phút). Vui lòng thử lại!");
-        btn.innerText = oldText;
-        btn.disabled = false;
-    }
-}
+        // --- HÀM XỬ LÝ NẠP THẺ AUTO (KẾT NỐI RENDER) ---
+        async function sendCardToAPI() {
+            const type = document.getElementById('cardType').value;
+            const amount = document.getElementById('cardAmount').value;
+            const seri = document.getElementById('cardSeri').value;
+            const pin = document.getElementById('cardPin').value;
+
+            if(!type || !amount || !seri || !pin) return alert("Vui lòng nhập đầy đủ thông tin thẻ!");
+
+            const btn = document.querySelector('.btn-primary');
+            const originalText = btn.innerText;
+            btn.innerText = "Đang kết nối Server...";
+            btn.disabled = true;
+
+            try {
+                // 1. Gửi dữ liệu lên Server Render
+                const res = await fetch(`${BACKEND_URL}/api/deposit`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ type, amount, serial: seri, pin, username: uName })
+                });
+                const data = await res.json();
+
+                if(data.status === 1) {
+                    // 2. Nếu Server đã nhận, bắt đầu vòng lặp kiểm tra kết quả (Polling)
+                    const reqId = data.request_id;
+                    let dotCount = 0;
+                    
+                    let checkInterval = setInterval(async () => {
+                        dotCount = (dotCount + 1) % 4;
+                        btn.innerText = "Đang duyệt thẻ" + ".".repeat(dotCount);
+
+                        try {
+                            // Hỏi Server xem thẻ ID này xong chưa
+                            const checkRes = await fetch(`${BACKEND_URL}/api/check/${reqId}`);
+                            const checkData = await checkRes.json();
+
+                            if(checkData.status === 'success') {
+                                clearInterval(checkInterval);
+                                
+                                // --- CỘNG TIỀN ---
+                                let currentBal = parseInt(localStorage.getItem('myBalance')) || 0;
+                                let newBal = currentBal + checkData.amount;
+                                localStorage.setItem('myBalance', newBal);
+                                
+                                // --- LƯU LỊCH SỬ ---
+                                let h = JSON.parse(localStorage.getItem('myDepositHistory')) || [];
+                                h.unshift({ 
+                                    id: reqId, amount: checkData.amount, method: type + ' (Auto)', 
+                                    date: new Date().toLocaleString(), status: 'Thành công' 
+                                });
+                                localStorage.setItem('myDepositHistory', JSON.stringify(h));
+
+                                alert(`Nạp thành công ${checkData.amount.toLocaleString()}đ!`);
+                                window.location.reload();
+                            } 
+                            else if(checkData.status === 'wrong') {
+                                clearInterval(checkInterval);
+                                alert("Thất bại: Thẻ sai, sai mệnh giá hoặc đã sử dụng!");
+                                btn.innerText = originalText;
+                                btn.disabled = false;
+                            }
+                            // Nếu status là 'pending' thì không làm gì cả, đợi 3s sau hỏi tiếp
+                        } catch (e) { console.log("Đang chờ server phản hồi..."); }
+                    }, 3000); // 3 giây check 1 lần
+
+                } else {
+                    alert("Lỗi: " + data.message);
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                }
+
+            } catch (err) {
+                console.error(err);
+                alert("Lỗi kết nối Server! Nếu bạn vừa nạp lần đầu, hãy đợi 1 phút để Server khởi động rồi thử lại.");
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        // --- HÀM NHẬP GIFTCODE (THỦ CÔNG) ---
+        function redeemCode() {
+            const code = document.getElementById('giftCode').value.trim();
+            if(!code) return alert("Vui lòng nhập Code!");
+            
+            // Xử lý Code Gift (Logic cũ vẫn giữ để Admin tặng quà)
+            let usedCodes = JSON.parse(localStorage.getItem('usedCodes')) || [];
+            if(usedCodes.includes(code)) return alert("Code này đã dùng rồi!");
+
+            let money = 0;
+            if(code === "GENSAI10K") money = 10000; // Ví dụ mã code cứng
+            if(code === "OPEN20K") money = 20000;
+
+            if(money > 0) {
+                let bal = parseInt(localStorage.getItem('myBalance')) || 0;
+                localStorage.setItem('myBalance', bal + money);
+                usedCodes.push(code);
+                localStorage.setItem('usedCodes', JSON.stringify(usedCodes));
+                
+                let h = JSON.parse(localStorage.getItem('myDepositHistory')) || [];
+                h.unshift({ id: code, amount: money, method: 'Giftcode', date: new Date().toLocaleString(), status: 'Thành công' });
+                localStorage.setItem('myDepositHistory', JSON.stringify(h));
+
+                alert("Nhập Code thành công! Cộng " + money.toLocaleString() + "đ");
+                window.location.reload();
+            } else {
+                alert("Mã Code không tồn tại!");
+            }
+        }
+
+        // Logic Chuông thông báo
+        function toggleNotif() { document.getElementById('notif-box').style.display = document.getElementById('notif-box').style.display==='block'?'none':'block'; }
+        document.addEventListener('click', function(e) { if (!e.target.closest('.menu-toggle') && !e.target.closest('.mobile-menu')) menuBox.classList.remove('active'); if(!e.target.closest('.bell-wrapper')) document.getElementById('notif-box').style.display='none'; });
+    </script>
+</body>
+</html>
