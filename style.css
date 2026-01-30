@@ -34,10 +34,25 @@ body {
     animation: pageEntrance 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); 
 }
 
-.navbar { background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); padding: 15px 0; position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #f0f0f0; }
+.navbar { background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); padding: 10px 0; position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #f0f0f0; }
 .nav-inner { display: flex; justify-content: space-between; align-items: center; position: relative; }
-.logo { font-weight: 800; font-size: 20px; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: transform 0.3s; }
-.logo:active { transform: scale(0.95); }
+
+.logo-img {
+    height: 40px;
+    width: auto;
+    object-fit: contain;
+    cursor: pointer;
+    transition: transform 0.3s;
+    content: url('https://i.postimg.cc/SRwtHbrS/file-000000003c247208a974f17e7168edea-1-removebg-preview.png');
+}
+.logo-img:hover { transform: scale(1.05); }
+.logo-img:active { transform: scale(0.95); }
+
+@media (prefers-color-scheme: dark) {
+    .logo-img {
+        content: url('https://i.postimg.cc/wByF8G1h/1769749760186.png');
+    }
+}
 
 .menu-toggle { font-size: 24px; cursor: pointer; color: var(--primary); padding: 5px; transition: transform 0.2s; }
 .menu-toggle:active { transform: scale(0.8); }
@@ -149,13 +164,11 @@ table { width: 100%; border-collapse: collapse; white-space: nowrap; }
 th, td { padding: 15px 12px; border-bottom: 1px solid #f0f0f0; font-size: 13px; text-align: left; }
 .status { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; }
 
-/* 2 NÚT CHUYỂN TAB CỦA TRANG HISTORY (DẠNG VUÔNG) */
 .history-switcher { display: flex; gap: 15px; margin-bottom: 25px; }
 .switch-btn { flex: 1; padding: 15px; text-align: center; border-radius: 16px; background: #f3f4f6; color: #666; font-weight: 700; font-size: 14px; cursor: pointer; border: 2px solid transparent; transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; gap: 5px; }
 .switch-btn.active { background: white; color: black; border-color: black; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
 .switch-icon { font-size: 20px; margin-bottom: 5px; }
 
-/* --- ĐÂY LÀ PHẦN MÌNH ĐÃ THÊM LẠI: NÚT TAB CỦA TRANG NẠP TIỀN (DẠNG VIÊN THUỐC) --- */
 .tab-header { display: flex; margin-bottom: 20px; background: #f5f5f5; padding: 5px; border-radius: 50px; }
 .tab-btn { flex: 1; text-align: center; padding: 12px; cursor: pointer; font-weight: 700; font-size: 13px; color: #888; border-radius: 40px; transition: 0.3s; }
 .tab-btn.active { color: white; background: var(--primary); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
