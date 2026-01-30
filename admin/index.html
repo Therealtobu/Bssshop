@@ -8,15 +8,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .admin-card { background: #000; color: #fff; padding: 25px; border-radius: 20px; margin-bottom: 20px; }
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
-        .stat-item { background: #222; padding: 15px; border-radius: 12px; text-align: center; }
-        .stat-value { display: block; font-size: 20px; font-weight: 800; color: #22c55e; }
-        .stat-label { font-size: 11px; color: #aaa; text-transform: uppercase; }
-        .order-card { background: #fff; border: 1px solid #eee; padding: 15px; border-radius: 15px; margin-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); animation: pageEntrance 0.4s ease; }
-        .acc-box { background: #f8fafc; padding: 12px; border-radius: 10px; margin: 10px 0; font-family: 'Courier New', Courier, monospace; font-size: 14px; border-left: 4px solid #000; }
+        .order-card { background: #fff; border: 1px solid #eee; padding: 15px; border-radius: 15px; margin-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .acc-box { background: #f8fafc; padding: 12px; border-radius: 10px; margin: 10px 0; font-family: monospace; font-size: 13px; border-left: 4px solid #000; }
+        .note-box { background: #fffbeb; color: #b45309; padding: 10px; border-radius: 8px; font-size: 13px; margin-bottom: 10px; border: 1px dashed #b45309; }
         .btn-group { display: flex; gap: 10px; margin-top: 10px; }
-        .btn-status { flex: 1; padding: 12px; border-radius: 8px; border: none; font-weight: bold; font-size: 12px; cursor: pointer; color: #fff; transition: 0.2s; }
-        .btn-status:active { transform: scale(0.95); }
+        .btn-status { flex: 1; padding: 10px; border-radius: 8px; border: none; font-weight: bold; font-size: 12px; cursor: pointer; color: #fff; }
+        .input-price { width: 100%; padding: 8px; border: 2px solid #22c55e; border-radius: 6px; margin-bottom: 5px; }
     </style>
 </head>
 <body>
@@ -24,47 +21,104 @@
         const pass = prompt("Nhập mã bảo mật Admin:");
         if (pass !== "Gensai2026") { alert("Mã sai!"); window.location.href = "../index.html"; }
     </script>
-    <nav class="navbar"><div class="container nav-inner"><div class="logo">GENSAI ADMIN</div><div class="menu-toggle" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></div><div class="mobile-menu" id="mainMenu"></div></div></nav>
+    <nav class="navbar"><div class="container nav-inner"><img class="logo-img" src="https://i.postimg.cc/SRwtHbrS/file-000000003c247208a974f17e7168edea-1-removebg-preview.png"><div class="menu-toggle" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></div><div class="mobile-menu" id="mainMenu"></div></div></nav>
+    
     <div class="container">
         <div class="admin-card">
-            <span style="font-size: 12px; color: #888;">QUẢN LÝ CỬA HÀNG</span>
-            <h2 style="margin-top: 5px;">Thống Kê Đơn</h2>
-            <div class="stats-grid"><div class="stat-item"><span class="stat-label">Doanh thu</span><span id="totalRevenue" class="stat-value">0đ</span></div><div class="stat-item"><span class="stat-label">Đang chờ</span><span id="pendingCount" class="stat-value" style="color: #ef4444;">0</span></div></div>
+            <h2>Quản Lý Đơn</h2>
+            <p>Đơn cần báo giá: <b id="quoteCount" style="color:#fbbf24">0</b></p>
         </div>
-        <div class="history-switcher"><div id="tab-active" class="switch-btn active" onclick="setTab('active')">ĐƠN CẦN LÀM</div><div id="tab-done" class="switch-btn" onclick="setTab('done')">LỊCH SỬ XONG</div></div>
+        <div class="history-switcher">
+            <div id="tab-active" class="switch-btn active" onclick="setTab('active')">CẦN XỬ LÝ</div>
+            <div id="tab-done" class="switch-btn" onclick="setTab('done')">LỊCH SỬ</div>
+        </div>
         <div id="orderList"></div>
     </div>
+
     <script>
         const menuBox = document.getElementById('mainMenu');
-        menuBox.innerHTML = `<a href="../index.html" class="menu-item">Trang Chủ Khách</a><a href="#" onclick="location.reload()" class="menu-item">Làm Mới</a>`;
+        menuBox.innerHTML = `<a href="../index.html" class="menu-item">Về Web Khách</a><a href="#" onclick="location.reload()" class="menu-item">Làm Mới</a>`;
         function toggleMenu() { menuBox.classList.toggle('active'); }
+
         let currentTab = 'active';
+
         function loadAdminEngine() {
             const allOrders = JSON.parse(localStorage.getItem('myHistory')) || [];
             const container = document.getElementById('orderList');
             container.innerHTML = '';
-            let revenue = 0; let pending = 0;
+            
+            let quoteNeeded = 0;
+
             allOrders.forEach((order, index) => {
-                if (order.status === 'Thành công') revenue += order.price;
-                if (order.status === 'Chờ xử lý' || order.status === 'Đang xử lý') pending++;
-                const isShowingPending = order.status === 'Chờ xử lý' || order.status === 'Đang xử lý';
-                if ((currentTab === 'active' && isShowingPending) || (currentTab === 'done' && !isShowingPending)) { renderOrderCard(order, index, container); }
+                if (order.status === 'Đang xét giá') quoteNeeded++;
+
+                // Logic Tab: Active (Đang xét giá, Chờ xác nhận, Đang xử lý) - Done (Thành công, Hủy)
+                const isActive = ['Đang xét giá', 'Chờ xác nhận', 'Đang xử lý'].includes(order.status);
+                
+                if ((currentTab === 'active' && isActive) || (currentTab === 'done' && !isActive)) {
+                    renderOrderCard(order, index, container);
+                }
             });
-            document.getElementById('totalRevenue').innerText = revenue.toLocaleString() + 'đ';
-            document.getElementById('pendingCount').innerText = pending;
-            if(container.innerHTML === '') container.innerHTML = '<p style="text-align:center; padding:30px; color:#999">Không có dữ liệu.</p>';
+            document.getElementById('quoteCount').innerText = quoteNeeded;
         }
+
         function renderOrderCard(order, index, container) {
             const div = document.createElement('div'); div.className = 'order-card';
-            div.innerHTML = `<div style="display:flex; justify-content:space-between; align-items:start;"><div><b style="font-size:15px; color: #000;">${order.service}</b><br><span style="font-size:11px; color:#888;">ID: ${order.id} | ${order.date}</span></div><span class="status pending" style="background:${order.status==='Thành công'?'#ecfdf5':'#fff7ed'}; color:${order.status==='Thành công'?'#059669':'#c2410c'}">${order.status}</span></div><div class="acc-box">User: <b style="color: #3b82f6;">${order.acc}</b><br>Pass: <span style="color: #999;">${order.pass || 'Không cần'}</span></div>${(order.status !== 'Thành công' && order.status !== 'Bị hủy') ? `<div class="btn-group"><button class="btn-status" style="background:#3b82f6;" onclick="changeStatus(${index}, 'Đang xử lý')">NHẬN</button><button class="btn-status" style="background:#22c55e;" onclick="changeStatus(${index}, 'Thành công')">XONG</button><button class="btn-status" style="background:#ef4444;" onclick="changeStatus(${index}, 'Bị hủy')">HỦY</button></div>` : ''}`;
+            
+            // Xử lý hiển thị đặc biệt cho đơn Cày Thuê
+            let extraHtml = "";
+            if (order.status === 'Đang xét giá') {
+                extraHtml = `
+                    <div style="margin-top:10px">
+                        <label style="font-size:12px; font-weight:bold">Báo giá cho khách (VNĐ):</label>
+                        <input type="number" id="price-${index}" class="input-price" placeholder="Nhập số tiền...">
+                        <button class="btn-status" style="background:#000; width:100%" onclick="setQuote(${index})">GỬI BÁO GIÁ</button>
+                    </div>
+                `;
+            }
+
+            div.innerHTML = `
+                <div style="display:flex; justify-content:space-between;">
+                    <b style="color:#000">${order.service}</b>
+                    <span class="status" style="background:#eee; font-size:11px">${order.status}</span>
+                </div>
+                <div class="acc-box">
+                    User: <b style="color:#3b82f6">${order.acc}</b><br>
+                    Pass: <b style="color:#ef4444">${order.pass}</b>
+                </div>
+                ${order.note ? `<div class="note-box">📝 ${order.note}</div>` : ''}
+                
+                ${extraHtml}
+
+                ${(order.status === 'Đang xử lý') ? `
+                    <div class="btn-group">
+                        <button class="btn-status" style="background:#22c55e" onclick="changeStatus(${index}, 'Thành công')">HOÀN TẤT</button>
+                        <button class="btn-status" style="background:#ef4444" onclick="changeStatus(${index}, 'Bị hủy')">HỦY ĐƠN</button>
+                    </div>
+                ` : ''}
+            `;
             container.appendChild(div);
         }
+
+        function setQuote(index) {
+            let priceVal = document.getElementById(`price-${index}`).value;
+            if(!priceVal) return alert("Chưa nhập giá!");
+            
+            let all = JSON.parse(localStorage.getItem('myHistory'));
+            all[index].price = parseInt(priceVal);
+            all[index].status = "Chờ xác nhận"; // Chuyển trạng thái để khách thấy
+            localStorage.setItem('myHistory', JSON.stringify(all));
+            alert("Đã gửi báo giá " + priceVal + "đ cho khách!");
+            loadAdminEngine();
+        }
+
         function changeStatus(index, status) {
-            let all = JSON.parse(localStorage.getItem('myHistory')) || [];
+            let all = JSON.parse(localStorage.getItem('myHistory'));
             all[index].status = status;
             localStorage.setItem('myHistory', JSON.stringify(all));
             loadAdminEngine();
         }
+
         function setTab(t) {
             currentTab = t;
             document.getElementById('tab-active').classList.toggle('active', t==='active');
