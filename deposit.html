@@ -1,89 +1,84 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Nạp Tiền - GENSAISHOP</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body>
-    <nav class="navbar">
-        <div class="container nav-inner">
-            <img class="logo-img" onclick="window.location.href='index.html'" alt="GENSAI SHOP">
-            <div class="menu-toggle" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></div>
-            <div class="mobile-menu" id="mainMenu"></div>
-        </div>
-    </nav>
+// --- SCRIPT NẠP THẺ TỰ ĐỘNG (Dán vào deposit.html) ---
 
-    <div class="container">
-        <div class="auth-box" style="max-width:600px; margin-top:20px">
-            <h3 style="margin-bottom:20px; text-align:center">Nạp Tiền</h3>
+// Thay cái này bằng Link Render của bạn (bỏ dấu / ở cuối nếu có)
+const BACKEND_URL = "https://gensai-backend.onrender.com"; 
+
+async function sendCardToAPI() {
+    const type = document.getElementById('cardType').value;
+    const amount = document.getElementById('cardAmount').value;
+    const seri = document.getElementById('cardSeri').value;
+    const pin = document.getElementById('cardPin').value;
+    const uName = localStorage.getItem('myUser');
+
+    if(!type || !amount || !seri || !pin) return alert("Vui lòng nhập đầy đủ thông tin!");
+
+    const btn = document.querySelector('.btn-primary');
+    const oldText = btn.innerText;
+    btn.innerText = "Đang kết nối Server...";
+    btn.disabled = true;
+
+    try {
+        // 1. Gửi thẻ lên Server
+        const res = await fetch(`${BACKEND_URL}/api/deposit`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ type, amount, serial: seri, pin, username: uName })
+        });
+        const data = await res.json();
+
+        if(data.status === 1) {
+            // 2. Server đã nhận, bắt đầu chế độ chờ kết quả
+            const reqId = data.request_id;
+            let dotCount = 0;
             
-            <div class="tab-header">
-                <div id="tab1" class="tab-btn active" onclick="switchTab('bank')">Bank (Auto)</div>
-                <div id="tab2" class="tab-btn" onclick="switchTab('card')">Thẻ Cào</div>
-            </div>
+            // Hàm kiểm tra liên tục mỗi 3 giây
+            let checkInterval = setInterval(async () => {
+                dotCount = (dotCount + 1) % 4;
+                btn.innerText = "Đang duyệt thẻ" + ".".repeat(dotCount);
 
-            <div id="bank-area">
-                <div style="background:#f0f9ff; padding:15px; border-radius:10px; text-align:center; font-size:14px">
-                    <p><b>MB BANK</b></p>
-                    <p style="font-size:18px; font-weight:bold; margin:5px 0">0123 456 789</p>
-                    <p>Nội dung: <b style="color:red">NAP GENSAI</b></p>
-                </div>
-                <button class="btn-primary" style="width:100%; margin-top:20px" onclick="fakeDeposit(50000, 'Chuyển khoản')">[TEST] Nạp 50k</button>
-            </div>
+                try {
+                    const checkRes = await fetch(`${BACKEND_URL}/api/check/${reqId}`);
+                    const checkData = await checkRes.json();
 
-            <div id="card-area" style="display:none">
-                <select class="input-box"><option>Viettel</option><option>Vina</option></select>
-                <select class="input-box"><option>10.000đ</option><option>50.000đ</option></select>
-                <input type="text" class="input-box" placeholder="Mã thẻ">
-                <input type="text" class="input-box" placeholder="Seri">
-                <button class="btn-primary" style="width:100%" onclick="alert('Đang xử lý thẻ...')">GỬI THẺ</button>
-            </div>
-        </div>
-    </div>
+                    if(checkData.status === 'success') {
+                        clearInterval(checkInterval);
+                        
+                        // CỘNG TIỀN
+                        let currentBal = parseInt(localStorage.getItem('myBalance')) || 0;
+                        let newBal = currentBal + checkData.amount;
+                        localStorage.setItem('myBalance', newBal);
+                        
+                        // LƯU LỊCH SỬ
+                        let h = JSON.parse(localStorage.getItem('myDepositHistory')) || [];
+                        h.unshift({ 
+                            id: reqId, amount: checkData.amount, method: type, 
+                            date: new Date().toLocaleString(), status: 'Thành công' 
+                        });
+                        localStorage.setItem('myDepositHistory', JSON.stringify(h));
 
-    <script>
-        if(!localStorage.getItem('isLoggedIn')) window.location.href = 'login.html';
+                        alert(`Nạp thành công ${checkData.amount.toLocaleString()}đ!`);
+                        window.location.reload();
+                    } 
+                    else if(checkData.status === 'wrong') {
+                        clearInterval(checkInterval);
+                        alert("Thất bại: Thẻ sai hoặc đã được sử dụng!");
+                        btn.innerText = oldText;
+                        btn.disabled = false;
+                    }
+                    // Nếu status là 'pending' thì cứ để nó quay tiếp
+                } catch (e) { console.log("Đang chờ server..."); }
+            }, 3000); // 3 giây hỏi 1 lần
 
-        // MENU LOGIC
-        const uName = localStorage.getItem('myUser');
-        const menuBox = document.getElementById('mainMenu');
-        menuBox.innerHTML = `<div style="padding:10px; font-size:12px; color:#888; border-bottom:1px solid #eee">Acc: <b>${uName}</b></div>
-            <a href="index.html" class="menu-item">Trang chủ</a><a href="dashboard.html" class="menu-item">Shop</a><a href="deposit.html" class="menu-item">Nạp Tiền</a><a href="history.html" class="menu-item">Lịch Sử</a><a href="#" onclick="doLogout()" class="menu-item logout">Đăng xuất</a>`;
-        function toggleMenu() { menuBox.classList.toggle('active'); }
-        function doLogout() { localStorage.removeItem('isLoggedIn'); window.location.href = 'index.html'; }
-
-        // LOGIC NẠP TIỀN
-        function switchTab(t) {
-            document.getElementById('bank-area').style.display = (t=='bank') ? 'block' : 'none';
-            document.getElementById('card-area').style.display = (t=='card') ? 'block' : 'none';
-            document.getElementById('tab1').className = (t=='bank') ? 'tab-btn active' : 'tab-btn';
-            document.getElementById('tab2').className = (t=='card') ? 'tab-btn active' : 'tab-btn';
+        } else {
+            alert("Lỗi gửi thẻ: " + data.message);
+            btn.innerText = oldText;
+            btn.disabled = false;
         }
 
-        function fakeDeposit(amount, method) {
-            // 1. Cộng tiền
-            let bal = parseInt(localStorage.getItem('myBalance')) || 0;
-            bal += amount;
-            localStorage.setItem('myBalance', bal);
-
-            // 2. LƯU LỊCH SỬ NẠP (Mới thêm)
-            let depHistory = JSON.parse(localStorage.getItem('myDepositHistory')) || [];
-            let newDep = {
-                id: 'NAP' + Math.floor(Math.random() * 9000),
-                amount: amount,
-                method: method,
-                date: new Date().toLocaleString('vi-VN'),
-                status: 'Thành công'
-            };
-            depHistory.unshift(newDep); // Thêm vào đầu
-            localStorage.setItem('myDepositHistory', JSON.stringify(depHistory));
-
-            alert("Nạp thành công " + amount.toLocaleString() + "đ");
-            window.location.href = "history.html"; // Chuyển thẳng sang lịch sử để xem
-        }
-    </script>
-</body>
-</html>
+    } catch (err) {
+        console.error(err);
+        alert("Server đang khởi động (mất khoảng 1 phút). Vui lòng thử lại!");
+        btn.innerText = oldText;
+        btn.disabled = false;
+    }
+}
