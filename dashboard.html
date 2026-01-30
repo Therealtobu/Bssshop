@@ -27,7 +27,6 @@
         <h3 style="margin-top:20px; font-size:16px; border-left:4px solid black; padding-left:10px; text-transform: uppercase;">Vật Phẩm Bee Swarm</h3>
         
         <div class="grid">
-            
             <div class="card">
                 <img src="https://i.postimg.cc/7Lrp7X49/tum-voucherler-bee-swarm-13751871.png" alt="Bear Bee">
                 <div class="card-body">
@@ -63,7 +62,6 @@
                     <button class="btn-buy" onclick="openModal('x2 Convert Speed', 60000)">MUA NGAY</button>
                 </div>
             </div>
-
         </div>
     </div>
 
@@ -73,23 +71,17 @@
             <p style="font-size:14px">Vật phẩm: <b id="mName">...</b></p>
             <p style="margin-bottom:15px; font-size:14px">Giá tiền: <b id="mPrice" style="color:#ef4444">...</b></p>
             
-            <input type="text" id="accUser" class="input-box" placeholder="Tài khoản Roblox...">
-            <input type="password" id="accPass" class="input-box" placeholder="Mật khẩu Roblox...">
+            <label style="font-size:13px; font-weight:bold; display:block; margin-bottom:5px">Nhập tên tài khoản (Username):</label>
+            <input type="text" id="accUser" class="input-box" placeholder="Ví dụ: RobloxPlayer123...">
             
-            <div style="font-size:11px; color:red; margin-bottom:15px; background:#fff2f2; padding:10px; border-radius: 8px; line-height:1.4">
-                ⚠️ <b>LƯU Ý:</b> Tắt bảo mật 2 lớp (2-Step) để Admin có thể đăng nhập vào cày.
-            </div>
-
             <button class="btn-primary" style="width:100%" onclick="processOrder()">THANH TOÁN NGAY</button>
             <button onclick="closeModal()" style="width:100%; background:none; border:none; margin-top:10px; cursor:pointer; font-size:13px; color: #888;">Quay lại</button>
         </div>
     </div>
 
     <script>
-        
         if(!localStorage.getItem('isLoggedIn')) window.location.href = 'login.html';
 
-        
         const uName = localStorage.getItem('myUser');
         const menuBox = document.getElementById('mainMenu');
         menuBox.innerHTML = `
@@ -104,7 +96,6 @@
         function toggleMenu() { menuBox.classList.toggle('active'); }
         function doLogout() { localStorage.removeItem('isLoggedIn'); window.location.href = 'index.html'; }
 
-        
         let balance = parseInt(localStorage.getItem('myBalance')) || 0;
         document.getElementById('uName').innerText = uName;
         document.getElementById('uBal').innerText = balance.toLocaleString();
@@ -115,20 +106,20 @@
             currentItem = { name, price };
             document.getElementById('mName').innerText = name;
             document.getElementById('mPrice').innerText = price.toLocaleString() + 'đ';
+            document.getElementById('accUser').value = ""; // Reset ô nhập mỗi lần mở
             document.getElementById('buyModal').style.display = 'flex';
         }
 
         function closeModal() { document.getElementById('buyModal').style.display = 'none'; }
 
-        
+        // ENGINE MUA HÀNG (ĐÃ SỬA: BỎ PASS)
         function processOrder() {
             let acc = document.getElementById('accUser').value;
-            let pass = document.getElementById('accPass').value; // Lấy mật khẩu khách nhập
             
-            if(!acc || !pass) return alert("Vui lòng điền đủ tài khoản và mật khẩu!");
+            // Chỉ kiểm tra username
+            if(!acc) return alert("Vui lòng nhập tên tài khoản game để nhận quà!");
 
             if(balance >= currentItem.price) {
-                
                 balance -= currentItem.price;
                 localStorage.setItem('myBalance', balance);
                 
@@ -138,14 +129,14 @@
                     service: currentItem.name,
                     price: currentItem.price,
                     acc: acc, 
-                    pass: pass, // Đẩy mật khẩu sang cho Admin xem
+                    pass: "Không cần", // Đánh dấu cho Admin biết là không cần pass
                     date: new Date().toLocaleString('vi-VN'),
                     status: 'Chờ xử lý'
                 };
                 history.unshift(newOrder);
                 localStorage.setItem('myHistory', JSON.stringify(history));
 
-                alert("Mua hàng thành công! Đơn hàng đã được gửi.");
+                alert("Mua thành công! Vui lòng chờ nhận vật phẩm trong game.");
                 window.location.href = "history.html";
             } else {
                 alert("Số dư không đủ. Vui lòng nạp thêm!");
