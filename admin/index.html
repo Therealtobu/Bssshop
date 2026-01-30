@@ -2,130 +2,136 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Admin Panel - GENSAISHOP</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - GENSAISHOP</title>
     <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        .admin-card { background: #000; color: #fff; padding: 25px; border-radius: 20px; margin-bottom: 20px; }
-        .order-card { background: #fff; border: 1px solid #eee; padding: 15px; border-radius: 15px; margin-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .acc-box { background: #f8fafc; padding: 12px; border-radius: 10px; margin: 10px 0; font-family: monospace; font-size: 13px; border-left: 4px solid #000; }
-        .note-box { background: #fffbeb; color: #b45309; padding: 10px; border-radius: 8px; font-size: 13px; margin-bottom: 10px; border: 1px dashed #b45309; }
-        .btn-group { display: flex; gap: 10px; margin-top: 10px; }
-        .btn-status { flex: 1; padding: 10px; border-radius: 8px; border: none; font-weight: bold; font-size: 12px; cursor: pointer; color: #fff; }
-        .input-price { width: 100%; padding: 8px; border: 2px solid #22c55e; border-radius: 6px; margin-bottom: 5px; }
+        .admin-card { background: #000; color: #fff; padding: 20px; border-radius: 12px; margin-bottom: 20px; }
+        .order-card { background: white; padding: 10px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 10px; font-size: 13px; }
+        .badge-status { padding: 3px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; background: #eee; float: right; }
+        .btn-act { padding: 5px 10px; border: none; border-radius: 4px; color: white; font-weight: bold; cursor: pointer; font-size: 11px; margin-right: 5px; }
+        .img-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 3000; }
     </style>
 </head>
 <body>
-    <script>
-        const pass = prompt("Nhập mã bảo mật Admin:");
-        if (pass !== "Gensai2026") { alert("Mã sai!"); window.location.href = "../index.html"; }
-    </script>
-    <nav class="navbar"><div class="container nav-inner"><img class="logo-img" src="https://i.postimg.cc/SRwtHbrS/file-000000003c247208a974f17e7168edea-1-removebg-preview.png"><div class="menu-toggle" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></div><div class="mobile-menu" id="mainMenu"></div></div></nav>
+    <script>if(prompt("Mật mã Admin:")!=="Gensai2026"){alert("Sai!");window.location.href="../index.html";}</script>
+    <nav class="navbar"><div class="container nav-inner"><div class="logo">GENSAI ADMIN</div><div class="menu-toggle" onclick="location.reload()"><i class="fa-solid fa-rotate-right"></i></div></div></nav>
     
     <div class="container">
-        <div class="admin-card">
-            <h2>Quản Lý Đơn</h2>
-            <p>Đơn cần báo giá: <b id="quoteCount" style="color:#fbbf24">0</b></p>
+        <div class="admin-grid">
+            
+            <div class="admin-col" style="border-top: 4px solid #facc15;">
+                <div class="col-title" style="color:#b45309">1. Cần Báo Giá <span id="count-quote">0</span></div>
+                <div id="list-quote"></div>
+            </div>
+
+            <div class="admin-col" style="border-top: 4px solid #22c55e;">
+                <div class="col-title" style="color:#15803d">2. Duyệt Gamepass <span id="count-gp">0</span></div>
+                <div id="list-gp"></div>
+            </div>
+
+            <div class="admin-col" style="border-top: 4px solid #a855f7;">
+                <div class="col-title" style="color:#7e22ce">3. Cày Thuê Đang Làm <span id="count-boost">0</span></div>
+                <div id="list-boost"></div>
+            </div>
+
         </div>
-        <div class="history-switcher">
-            <div id="tab-active" class="switch-btn active" onclick="setTab('active')">CẦN XỬ LÝ</div>
-            <div id="tab-done" class="switch-btn" onclick="setTab('done')">LỊCH SỬ</div>
-        </div>
-        <div id="orderList"></div>
+    </div>
+
+    <div id="imgModal" class="img-modal" onclick="this.style.display='none'">
+        <img id="viewImg" style="max-width:90%; max-height:90%; border-radius:10px;">
     </div>
 
     <script>
-        const menuBox = document.getElementById('mainMenu');
-        menuBox.innerHTML = `<a href="../index.html" class="menu-item">Về Web Khách</a><a href="#" onclick="location.reload()" class="menu-item">Làm Mới</a>`;
-        function toggleMenu() { menuBox.classList.toggle('active'); }
-
-        let currentTab = 'active';
-
-        function loadAdminEngine() {
-            const allOrders = JSON.parse(localStorage.getItem('myHistory')) || [];
-            const container = document.getElementById('orderList');
-            container.innerHTML = '';
+        function loadAdmin() {
+            const history = JSON.parse(localStorage.getItem('myHistory')) || [];
             
-            let quoteNeeded = 0;
+            const listQuote = document.getElementById('list-quote');
+            const listGp = document.getElementById('list-gp');
+            const listBoost = document.getElementById('list-boost');
+            
+            listQuote.innerHTML = ''; listGp.innerHTML = ''; listBoost.innerHTML = '';
+            let cQuote = 0, cGp = 0, cBoost = 0;
 
-            allOrders.forEach((order, index) => {
-                if (order.status === 'Đang xét giá') quoteNeeded++;
+            history.forEach((o, i) => {
+                // 1. CẦN BÁO GIÁ (Chỉ đơn Boost và trạng thái 'Đang xét giá')
+                if(o.type === 'boost' && o.status === 'Đang xét giá') {
+                    cQuote++;
+                    listQuote.innerHTML += `
+                        <div class="order-card">
+                            <b>${o.service}</b>
+                            <div style="margin:5px 0; color:#555">User: ${o.acc}</div>
+                            ${o.note ? `<div style="background:#fffbeb; padding:5px; margin-bottom:5px; font-size:11px">${o.note}</div>` : ''}
+                            ${o.img ? `<button onclick="viewImage('${o.img}')" style="background:#3b82f6; color:white; border:none; padding:4px; border-radius:4px; font-size:10px; cursor:pointer">Xem ảnh Acc</button>` : ''}
+                            <div style="margin-top:10px; display:flex;">
+                                <input type="number" id="price-${i}" placeholder="Nhập giá tiền..." style="width:70%; padding:5px; border:1px solid #ddd; border-radius:4px">
+                                <button onclick="setPrice(${i})" style="width:30%; background:#000; color:white; border:none; border-radius:4px; margin-left:5px; cursor:pointer">Gửi</button>
+                            </div>
+                        </div>`;
+                }
 
-                // Logic Tab: Active (Đang xét giá, Chờ xác nhận, Đang xử lý) - Done (Thành công, Hủy)
-                const isActive = ['Đang xét giá', 'Chờ xác nhận', 'Đang xử lý'].includes(order.status);
-                
-                if ((currentTab === 'active' && isActive) || (currentTab === 'done' && !isActive)) {
-                    renderOrderCard(order, index, container);
+                // 2. GAMEPASS (Chờ xử lý hoặc Đang xử lý)
+                if(o.type === 'gamepass' && (o.status === 'Chờ xử lý' || o.status === 'Đang xử lý')) {
+                    cGp++;
+                    listGp.innerHTML += `
+                        <div class="order-card">
+                            <span class="badge-status">${o.status}</span>
+                            <b>${o.service}</b><br>
+                            User: <b style="color:blue">${o.acc}</b>
+                            <div style="margin-top:8px">
+                                <button class="btn-act" style="background:#22c55e" onclick="update(${i}, 'Thành công')">Xong</button>
+                                <button class="btn-act" style="background:#ef4444" onclick="update(${i}, 'Bị hủy')">Hủy</button>
+                            </div>
+                        </div>`;
+                }
+
+                // 3. CÀY THUÊ (Chỉ hiện khi khách đã đồng ý giá -> Status 'Đang xử lý')
+                if(o.type === 'boost' && o.status === 'Đang xử lý') {
+                    cBoost++;
+                    listBoost.innerHTML += `
+                        <div class="order-card">
+                            <b style="color:#a855f7">${o.service}</b> (Giá: ${o.price.toLocaleString()}đ)<br>
+                            Acc: <b>${o.acc}</b> | Pass: <b style="color:red">${o.pass}</b>
+                            ${o.note ? `<div style="font-size:11px; color:#666; margin:5px 0">${o.note}</div>` : ''}
+                            ${o.img ? `<button onclick="viewImage('${o.img}')" style="margin-bottom:5px; cursor:pointer">Xem ảnh</button>` : ''}
+                            <div style="margin-top:5px">
+                                <button class="btn-act" style="background:#22c55e" onclick="update(${i}, 'Thành công')">Hoàn tất</button>
+                                <button class="btn-act" style="background:#ef4444" onclick="update(${i}, 'Bị hủy')">Hủy</button>
+                            </div>
+                        </div>`;
                 }
             });
-            document.getElementById('quoteCount').innerText = quoteNeeded;
+
+            document.getElementById('count-quote').innerText = cQuote;
+            document.getElementById('count-gp').innerText = cGp;
+            document.getElementById('count-boost').innerText = cBoost;
         }
 
-        function renderOrderCard(order, index, container) {
-            const div = document.createElement('div'); div.className = 'order-card';
-            
-            // Xử lý hiển thị đặc biệt cho đơn Cày Thuê
-            let extraHtml = "";
-            if (order.status === 'Đang xét giá') {
-                extraHtml = `
-                    <div style="margin-top:10px">
-                        <label style="font-size:12px; font-weight:bold">Báo giá cho khách (VNĐ):</label>
-                        <input type="number" id="price-${index}" class="input-price" placeholder="Nhập số tiền...">
-                        <button class="btn-status" style="background:#000; width:100%" onclick="setQuote(${index})">GỬI BÁO GIÁ</button>
-                    </div>
-                `;
-            }
-
-            div.innerHTML = `
-                <div style="display:flex; justify-content:space-between;">
-                    <b style="color:#000">${order.service}</b>
-                    <span class="status" style="background:#eee; font-size:11px">${order.status}</span>
-                </div>
-                <div class="acc-box">
-                    User: <b style="color:#3b82f6">${order.acc}</b><br>
-                    Pass: <b style="color:#ef4444">${order.pass}</b>
-                </div>
-                ${order.note ? `<div class="note-box">📝 ${order.note}</div>` : ''}
-                
-                ${extraHtml}
-
-                ${(order.status === 'Đang xử lý') ? `
-                    <div class="btn-group">
-                        <button class="btn-status" style="background:#22c55e" onclick="changeStatus(${index}, 'Thành công')">HOÀN TẤT</button>
-                        <button class="btn-status" style="background:#ef4444" onclick="changeStatus(${index}, 'Bị hủy')">HỦY ĐƠN</button>
-                    </div>
-                ` : ''}
-            `;
-            container.appendChild(div);
+        function setPrice(index) {
+            let p = document.getElementById(`price-${index}`).value;
+            if(!p) return alert("Nhập giá đi!");
+            let h = JSON.parse(localStorage.getItem('myHistory'));
+            h[index].price = parseInt(p);
+            h[index].status = "Chờ xác nhận"; // Đổi trạng thái để Chuông bên User báo đỏ
+            localStorage.setItem('myHistory', JSON.stringify(h));
+            alert("Đã báo giá! Đợi khách đồng ý.");
+            loadAdmin();
         }
 
-        function setQuote(index) {
-            let priceVal = document.getElementById(`price-${index}`).value;
-            if(!priceVal) return alert("Chưa nhập giá!");
-            
-            let all = JSON.parse(localStorage.getItem('myHistory'));
-            all[index].price = parseInt(priceVal);
-            all[index].status = "Chờ xác nhận"; // Chuyển trạng thái để khách thấy
-            localStorage.setItem('myHistory', JSON.stringify(all));
-            alert("Đã gửi báo giá " + priceVal + "đ cho khách!");
-            loadAdminEngine();
+        function update(index, status) {
+            let h = JSON.parse(localStorage.getItem('myHistory'));
+            h[index].status = status;
+            localStorage.setItem('myHistory', JSON.stringify(h));
+            loadAdmin();
         }
 
-        function changeStatus(index, status) {
-            let all = JSON.parse(localStorage.getItem('myHistory'));
-            all[index].status = status;
-            localStorage.setItem('myHistory', JSON.stringify(all));
-            loadAdminEngine();
+        function viewImage(base64) {
+            document.getElementById('viewImg').src = base64;
+            document.getElementById('imgModal').style.display = 'flex';
         }
 
-        function setTab(t) {
-            currentTab = t;
-            document.getElementById('tab-active').classList.toggle('active', t==='active');
-            document.getElementById('tab-done').classList.toggle('active', t==='done');
-            loadAdminEngine();
-        }
-        loadAdminEngine();
+        loadAdmin();
     </script>
 </body>
 </html>
