@@ -11,8 +11,19 @@
     <nav class="navbar">
         <div class="container nav-inner">
             <img class="logo-img" onclick="window.location.href='index.html'" alt="GENSAI SHOP">
-            <div id="notif-badge" class="badge-notify">!</div>
-            <div class="menu-toggle" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></div>
+            
+            <div style="display:flex; align-items:center;">
+                <div class="bell-wrapper" onclick="toggleNotif()">
+                    <i class="fa-solid fa-bell"></i>
+                    <div id="bell-dot" class="bell-dot"></div>
+                    <div id="notif-box" class="notif-box">
+                        <h4 style="margin-bottom:10px; font-size:14px">Thông Báo</h4>
+                        <div id="notif-content"></div>
+                    </div>
+                </div>
+                <div class="menu-toggle" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></div>
+            </div>
+            
             <div class="mobile-menu" id="mainMenu"></div>
         </div>
     </nav>
@@ -20,44 +31,26 @@
     <div class="container">
         <div style="margin-top:20px; display:flex; justify-content:space-between; align-items:center">
             <h3 style="font-size:16px">Chào, <span id="uName" style="color:#3b82f6">...</span></h3>
-            <div style="background:white; padding:6px 12px; border-radius:50px; border:1px solid #ddd; font-size:14px; font-weight:bold">
-                Số dư: <span id="uBal" style="color:#22c55e">0</span>đ
-            </div>
+            <div style="font-size:14px; font-weight:bold">Số dư: <span id="uBal" style="color:#22c55e">0</span>đ</div>
         </div>
 
-        <div class="section-header"><i class="fa-solid fa-ticket"></i> Mua Gamepass (Tặng Quà)</div>
+        <div class="section-header"><i class="fa-solid fa-ticket"></i> Mua Gamepass</div>
         <div class="grid">
             <div class="card">
                 <img src="https://i.postimg.cc/7Lrp7X49/tum-voucherler-bee-swarm-13751871.png">
-                <div class="card-body">
-                    <div class="card-title">Bear Bee Voucher</div>
-                    <div class="price">120.000đ</div>
-                    <button class="btn-buy" onclick="openModal('gamepass', 'Bear Bee Voucher', 120000)">MUA NGAY</button>
-                </div>
+                <div class="card-body"><div class="card-title">Bear Bee Voucher</div><div class="price">120.000đ</div><button class="btn-buy" onclick="openModal('gamepass', 'Bear Bee Voucher', 120000)">MUA NGAY</button></div>
             </div>
             <div class="card">
                 <img src="https://i.postimg.cc/3wZbGT9c/tum-voucherler-bee-swarm-13751871-1.png">
-                <div class="card-body">
-                    <div class="card-title">Cub Buddy Voucher</div>
-                    <div class="price">80.000đ</div>
-                    <button class="btn-buy" onclick="openModal('gamepass', 'Cub Buddy Voucher', 80000)">MUA NGAY</button>
-                </div>
+                <div class="card-body"><div class="card-title">Cub Buddy Voucher</div><div class="price">80.000đ</div><button class="btn-buy" onclick="openModal('gamepass', 'Cub Buddy Voucher', 80000)">MUA NGAY</button></div>
             </div>
             <div class="card">
                 <img src="https://i.postimg.cc/Px336Qg7/tum-voucherler-bee-swarm-13751871-2.png">
-                <div class="card-body">
-                    <div class="card-title">x2 Bee Gather</div>
-                    <div class="price">60.000đ</div>
-                    <button class="btn-buy" onclick="openModal('gamepass', 'x2 Bee Gather', 60000)">MUA NGAY</button>
-                </div>
+                <div class="card-body"><div class="card-title">x2 Bee Gather</div><div class="price">60.000đ</div><button class="btn-buy" onclick="openModal('gamepass', 'x2 Bee Gather', 60000)">MUA NGAY</button></div>
             </div>
             <div class="card">
                 <img src="https://i.postimg.cc/WpyYgS6N/tum-voucherler-bee-swarm-13751871-3.png">
-                <div class="card-body">
-                    <div class="card-title">x2 Convert Speed</div>
-                    <div class="price">60.000đ</div>
-                    <button class="btn-buy" onclick="openModal('gamepass', 'x2 Convert Speed', 60000)">MUA NGAY</button>
-                </div>
+                <div class="card-body"><div class="card-title">x2 Convert Speed</div><div class="price">60.000đ</div><button class="btn-buy" onclick="openModal('gamepass', 'x2 Convert Speed', 60000)">MUA NGAY</button></div>
             </div>
         </div>
 
@@ -65,143 +58,52 @@
         <div class="grid">
             <div class="card">
                 <img src="https://i.postimg.cc/Y9Sn9zqD/Screenshot-20260130-123045-Discord.jpg">
-                <div class="card-body">
-                    <div class="card-title">Bubble / Fire Mask</div>
-                    <div class="price" style="color:#666; font-size:13px">Giá: Thương lượng</div>
-                    <button class="btn-buy" onclick="openModal('boost', 'Mask Co Ban', 0, ['Bubble Mask', 'Fire Mask'])">ĐẶT ĐƠN</button>
-                </div>
+                <div class="card-body"><div class="card-title">Bubble / Fire Mask</div><div class="price" style="color:#666; font-size:13px">Thương lượng</div><button class="btn-buy" onclick="openModal('boost', 'Mask Co Ban', 0, ['Bubble Mask', 'Fire Mask'])">ĐẶT ĐƠN</button></div>
             </div>
             <div class="card">
                 <img src="https://i.postimg.cc/v82BcYXK/Screenshot-20260130-123511-Discord.jpg">
-                <div class="card-body">
-                    <div class="card-title">Diamond / Demon Mask</div>
-                    <div class="price" style="color:#666; font-size:13px">Giá: Thương lượng</div>
-                    <button class="btn-buy" onclick="openModal('boost', 'Mask Cao Cap', 0, ['Diamond Mask', 'Demon Mask'])">ĐẶT ĐƠN</button>
-                </div>
+                <div class="card-body"><div class="card-title">Diamond / Demon Mask</div><div class="price" style="color:#666; font-size:13px">Thương lượng</div><button class="btn-buy" onclick="openModal('boost', 'Mask Cao Cap', 0, ['Diamond Mask', 'Demon Mask'])">ĐẶT ĐƠN</button></div>
             </div>
             <div class="card">
                 <img src="https://i.postimg.cc/J0sRbXKs/Gummy-Mask.webp">
-                <div class="card-body">
-                    <div class="card-title">Gummy Mask</div>
-                    <div class="price" style="color:#666; font-size:13px">Giá: Thương lượng</div>
-                    <button class="btn-buy" onclick="openModal('boost', 'Gummy Mask', 0)">ĐẶT ĐƠN</button>
-                </div>
+                <div class="card-body"><div class="card-title">Gummy Mask</div><div class="price" style="color:#666; font-size:13px">Thương lượng</div><button class="btn-buy" onclick="openModal('boost', 'Gummy Mask', 0)">ĐẶT ĐƠN</button></div>
             </div>
             <div class="card">
                 <img src="https://i.postimg.cc/PqfJCCG9/static-assets-upload12265840429838700596.webp">
-                <div class="card-body">
-                    <div class="card-title">Demon Mask (End)</div>
-                    <div class="price" style="color:#666; font-size:13px">Giá: Thương lượng</div>
-                    <button class="btn-buy" onclick="openModal('boost', 'Demon Mask End', 0)">ĐẶT ĐƠN</button>
-                </div>
+                <div class="card-body"><div class="card-title">Honey Mask</div><div class="price" style="color:#666; font-size:13px">Thương lượng</div><button class="btn-buy" onclick="openModal('boost', 'Honey Mask', 0)">ĐẶT ĐƠN</button></div>
             </div>
-            <div class="card">
-                <img src="https://i.postimg.cc/0QmTxCtT/images-(17).jpg">
-                <div class="card-body">
-                    <div class="card-title">Coconut Clogs</div>
-                    <div class="price" style="color:#666; font-size:13px">Giá: Thương lượng</div>
-                    <button class="btn-buy" onclick="openModal('boost', 'Coconut Clogs', 0)">ĐẶT ĐƠN</button>
-                </div>
-            </div>
-            <div class="card">
-                <img src="https://i.postimg.cc/C1jQ9x5p/Screenshot-20260130-123640-Discord.jpg">
-                <div class="card-body">
-                    <div class="card-title">Gummy Boots</div>
-                    <div class="price" style="color:#666; font-size:13px">Giá: Thương lượng</div>
-                    <button class="btn-buy" onclick="openModal('boost', 'Gummy Boots', 0)">ĐẶT ĐƠN</button>
-                </div>
-            </div>
-            <div class="card">
-                <img src="https://i.postimg.cc/0jj7DVLC/Screenshot-20260130-125715-Discord.jpg">
-                <div class="card-body">
-                    <div class="card-title">Guards (Cobalt/Crimson)</div>
-                    <div class="price" style="color:#666; font-size:13px">Giá: Thương lượng</div>
-                    <button class="btn-buy" onclick="openModal('boost', 'Guards', 0, ['Cobalt Guard', 'Crimson Guard'])">ĐẶT ĐƠN</button>
-                </div>
-            </div>
-            <div class="card">
-                <img src="https://i.postimg.cc/cJtjMmNY/Screenshot-20260130-123550-Discord.jpg">
-                <div class="card-body">
-                    <div class="card-title">Petal Belt</div>
-                    <div class="price" style="color:#666; font-size:13px">Giá: Thương lượng</div>
-                    <button class="btn-buy" onclick="openModal('boost', 'Petal Belt', 0)">ĐẶT ĐƠN</button>
-                </div>
-            </div>
-            <div class="card">
-                <img src="https://i.postimg.cc/B6Vj94VB/images-(18).jpg">
-                <div class="card-body">
-                    <div class="card-title">Vicious Bee</div>
-                    <div class="price" style="color:#666; font-size:13px">Giá: Thương lượng</div>
-                    <button class="btn-buy" onclick="openModal('boost', 'Vicious Bee', 0)">ĐẶT ĐƠN</button>
-                </div>
-            </div>
-            <div class="card">
-                <img src="https://i.postimg.cc/pVmZ9TxS/Gummy-Bee.webp">
-                <div class="card-body">
-                    <div class="card-title">Gummy Bee</div>
-                    <div class="price" style="color:#666; font-size:13px">Giá: Thương lượng</div>
-                    <button class="btn-buy" onclick="openModal('boost', 'Gummy Bee', 0)">ĐẶT ĐƠN</button>
-                </div>
-            </div>
-            <div class="card">
-                <img src="https://i.postimg.cc/J7HNr25z/Screenshot-20260130-123440-Discord.jpg">
-                <div class="card-body">
-                    <div class="card-title">End Game Tools</div>
-                    <div class="price" style="color:#666; font-size:13px">Giá: Thương lượng</div>
-                    <button class="btn-buy" onclick="openModal('boost', 'End Tools', 0, ['Dark Scythe', 'Tide Popper'])">ĐẶT ĐƠN</button>
-                </div>
-            </div>
-            <div class="card">
-                <img src="https://i.postimg.cc/CLYz3PPp/Gummyballer.webp">
-                <div class="card-body">
-                    <div class="card-title">Gummyballer</div>
-                    <div class="price" style="color:#666; font-size:13px">Giá: Thương lượng</div>
-                    <button class="btn-buy" onclick="openModal('boost', 'Gummyballer', 0)">ĐẶT ĐƠN</button>
-                </div>
-            </div>
+            <div class="card"><img src="https://i.postimg.cc/0QmTxCtT/images-(17).jpg"><div class="card-body"><div class="card-title">Coconut Clogs</div><div class="price" style="color:#666; font-size:13px">Thương lượng</div><button class="btn-buy" onclick="openModal('boost', 'Coconut Clogs', 0)">ĐẶT ĐƠN</button></div></div>
+             <div class="card"><img src="https://i.postimg.cc/C1jQ9x5p/Screenshot-20260130-123640-Discord.jpg"><div class="card-body"><div class="card-title">Gummy Boots</div><div class="price" style="color:#666; font-size:13px">Thương lượng</div><button class="btn-buy" onclick="openModal('boost', 'Gummy Boots', 0)">ĐẶT ĐƠN</button></div></div>
+             <div class="card"><img src="https://i.postimg.cc/0jj7DVLC/Screenshot-20260130-125715-Discord.jpg"><div class="card-body"><div class="card-title">Guards (Cobalt/Crimson)</div><div class="price" style="color:#666; font-size:13px">Thương lượng</div><button class="btn-buy" onclick="openModal('boost', 'Guards', 0, ['Cobalt Guard', 'Crimson Guard'])">ĐẶT ĐƠN</button></div></div>
+             <div class="card"><img src="https://i.postimg.cc/cJtjMmNY/Screenshot-20260130-123550-Discord.jpg"><div class="card-body"><div class="card-title">Petal Belt</div><div class="price" style="color:#666; font-size:13px">Thương lượng</div><button class="btn-buy" onclick="openModal('boost', 'Petal Belt', 0)">ĐẶT ĐƠN</button></div></div>
         </div>
     </div>
 
     <div id="buyModal" class="modal">
         <div class="modal-content">
-            <h3 style="margin-bottom:15px; font-size:18px; text-align: center;" id="modalTitle">XÁC NHẬN MUA</h3>
-            <p style="font-size:14px">Vật phẩm: <b id="mName">...</b></p>
-            <p style="margin-bottom:15px; font-size:14px" id="priceRow">Giá tiền: <b id="mPrice" style="color:#ef4444">...</b></p>
+            <h3 style="text-align:center; margin-bottom:15px" id="modalTitle">...</h3>
+            <p>Vật phẩm: <b id="mName">...</b></p>
+            <p id="priceRow" style="margin-bottom:10px">Giá: <b id="mPrice" style="color:red">...</b></p>
+            
             <div id="variantArea" class="variant-group" style="display:none"></div>
-            <input type="text" id="accUser" class="input-box" placeholder="Tên tài khoản (Username)...">
+            <input type="text" id="accUser" class="input-box" placeholder="Username Roblox...">
+            
             <div id="boostArea" style="display:none">
-                <input type="password" id="accPass" class="input-box" placeholder="Mật khẩu (Bắt buộc)...">
-                <label style="font-size:13px; font-weight:bold; display:block; margin:10px 0 5px">Bạn đã đủ nguyên liệu chưa?</label>
-                <textarea id="materialNote" class="input-box" style="height:60px" placeholder="Nếu chưa, ghi rõ số lượng nguyên liệu và tiền hiện có..."></textarea>
-                <label style="font-size:13px; font-weight:bold; display:block; margin-bottom:5px">Vui lòng chụp tổ ong của bạn:</label>
+                <input type="password" id="accPass" class="input-box" placeholder="Mật khẩu...">
+                <textarea id="materialNote" class="input-box" style="height:60px" placeholder="Số lượng nguyên liệu & tiền hiện có..."></textarea>
                 
                 <div class="upload-btn-wrapper">
-                    <button class="btn-upload" id="uploadBtnText"><i class="fa-solid fa-camera"></i> Bấm để chọn ảnh</button>
-                    <input type="file" id="hiveImg" accept="image/*" onchange="handleImage(this)">
+                    <button class="btn-upload" id="uploadBtnText"><i class="fa-solid fa-camera"></i> Chọn ảnh tổ ong</button>
+                    <input type="file" id="hiveImg" accept="image/*" onchange="compressImage(this)">
                 </div>
-                <div id="previewArea" style="margin-bottom:10px; display:none; text-align:center;">
-                    <img id="imgPreview" style="max-height:100px; border-radius:8px; border:1px solid #ddd;">
+                <div id="previewArea" style="display:none; text-align:center; margin-bottom:10px">
+                    <img id="imgPreview" style="max-height:80px; border:1px solid #ddd">
                 </div>
-
-                <div style="font-size:11px; color:#3b82f6; background:#eff6ff; padding:10px; border-radius:8px; margin-bottom:15px">
-                    <i class="fa-solid fa-circle-info"></i> Dựa vào tình trạng acc, chúng tôi sẽ báo giá lại sớm nhất.
-                </div>
+                <div style="font-size:11px; background:#eff6ff; padding:10px; border-radius:8px; color:#3b82f6">Dựa vào tình trạng acc sẽ báo giá sau.</div>
             </div>
-            <button class="btn-primary" style="width:100%" onclick="processOrder()">XÁC NHẬN ĐẶT</button>
-            <button onclick="closeModal()" style="width:100%; background:none; border:none; margin-top:10px; cursor:pointer; font-size:13px; color: #888;">Hủy bỏ</button>
-        </div>
-    </div>
 
-    <div id="confirmPriceBox" class="price-confirm-box">
-        <h4 style="text-align:center; color:#22c55e; margin-bottom:10px">ADMIN ĐÃ BÁO GIÁ!</h4>
-        <p style="text-align:center; font-size:14px; margin-bottom:15px">
-            Dịch vụ: <b id="cfName">...</b><br>
-            Giá chốt: <b id="cfPrice" style="color:red; font-size:18px">...</b>
-        </p>
-        <p style="text-align:center; font-size:13px; color:#666; margin-bottom:20px">Bạn có hài lòng với giá này không?</p>
-        <div style="display:flex; gap:10px">
-            <button class="btn-primary" onclick="userConfirmPrice(true)">CÓ, LÀM NGAY</button>
-            <button class="btn-primary" style="background:#ef4444" onclick="userConfirmPrice(false)">HỦY ĐƠN</button>
+            <button class="btn-primary" onclick="processOrder()">XÁC NHẬN</button>
+            <button onclick="document.getElementById('buyModal').style.display='none'" style="width:100%; border:none; background:none; margin-top:10px; color:#888">Hủy</button>
         </div>
     </div>
 
@@ -209,7 +111,7 @@
         if(!localStorage.getItem('isLoggedIn')) window.location.href = 'login.html';
         const uName = localStorage.getItem('myUser');
         const menuBox = document.getElementById('mainMenu');
-        menuBox.innerHTML = `<div style="padding:10px; font-size:12px; color:#888; border-bottom:1px solid #eee">Acc: <b>${uName}</b></div><a href="index.html" class="menu-item">Trang chủ</a><a href="dashboard.html" class="menu-item">Shop & Cày Thuê</a><a href="deposit.html" class="menu-item">Nạp Tiền</a><a href="history.html" class="menu-item">Lịch Sử Đơn</a><a href="#" onclick="doLogout()" class="menu-item logout">Đăng xuất</a>`;
+        menuBox.innerHTML = `<div style="padding:10px; font-size:12px; color:#888; border-bottom:1px solid #eee">Acc: <b>${uName}</b></div><a href="index.html" class="menu-item">Trang chủ</a><a href="dashboard.html" class="menu-item">Shop</a><a href="deposit.html" class="menu-item">Nạp Tiền</a><a href="history.html" class="menu-item">Lịch Sử</a><a href="#" onclick="doLogout()" class="menu-item logout">Đăng xuất</a>`;
         function toggleMenu() { menuBox.classList.toggle('active'); }
         function doLogout() { localStorage.removeItem('isLoggedIn'); window.location.href = 'index.html'; }
 
@@ -217,22 +119,18 @@
         document.getElementById('uName').innerText = uName;
         document.getElementById('uBal').innerText = balance.toLocaleString();
 
-        let currentItem = {};
-        let selectedVariant = "";
+        let currentItem = {}, selectedVariant = "", finalBase64 = "";
 
         function openModal(type, name, price, variants = []) {
-            currentItem = { type, name, price };
-            selectedVariant = ""; 
+            currentItem = { type, name, price }; selectedVariant = ""; finalBase64 = "";
             document.getElementById('mName').innerText = name;
             document.getElementById('accUser').value = "";
             document.getElementById('buyModal').style.display = 'flex';
-            
-            // Reset ảnh
             document.getElementById('hiveImg').value = "";
-            document.getElementById('uploadBtnText').innerHTML = '<i class="fa-solid fa-camera"></i> Bấm để chọn ảnh';
+            document.getElementById('uploadBtnText').innerHTML = '<i class="fa-solid fa-camera"></i> Chọn ảnh tổ ong';
             document.getElementById('previewArea').style.display = 'none';
 
-            if (type === 'gamepass') {
+            if(type === 'gamepass') {
                 document.getElementById('priceRow').style.display = 'block';
                 document.getElementById('mPrice').innerText = price.toLocaleString() + 'đ';
                 document.getElementById('boostArea').style.display = 'none';
@@ -244,8 +142,7 @@
                 document.getElementById('accPass').value = "";
                 document.getElementById('materialNote').value = "";
                 document.getElementById('modalTitle').innerText = "ĐẶT CÀY THUÊ";
-                const vArea = document.getElementById('variantArea');
-                vArea.innerHTML = '';
+                const vArea = document.getElementById('variantArea'); vArea.innerHTML = '';
                 if(variants.length > 0) {
                     vArea.style.display = 'flex';
                     variants.forEach(v => { vArea.innerHTML += `<div class="variant-btn" onclick="selectVar(this, '${v}')">${v}</div>`; });
@@ -253,14 +150,27 @@
             }
         }
 
-        // HÀM XỬ LÝ ẢNH MỚI
-        function handleImage(input) {
+        // NÉN ẢNH ĐỂ GỬI ĐƯỢC CHO ADMIN
+        function compressImage(input) {
             if (input.files && input.files[0]) {
-                var reader = new FileReader();
+                const reader = new FileReader();
                 reader.onload = function (e) {
-                    document.getElementById('imgPreview').src = e.target.result;
-                    document.getElementById('previewArea').style.display = 'block';
-                    document.getElementById('uploadBtnText').innerText = "Đã chọn: " + input.files[0].name;
+                    const img = new Image();
+                    img.src = e.target.result;
+                    img.onload = function() {
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        const maxWidth = 300; // Nén nhỏ lại width 300px
+                        const scaleSize = maxWidth / img.width;
+                        canvas.width = maxWidth;
+                        canvas.height = img.height * scaleSize;
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        finalBase64 = canvas.toDataURL('image/jpeg', 0.7); // Chất lượng 70%
+                        
+                        document.getElementById('imgPreview').src = finalBase64;
+                        document.getElementById('previewArea').style.display = 'block';
+                        document.getElementById('uploadBtnText').innerText = "Đã nén ảnh thành công!";
+                    }
                 };
                 reader.readAsDataURL(input.files[0]);
             }
@@ -268,88 +178,101 @@
 
         function selectVar(el, val) {
             document.querySelectorAll('.variant-btn').forEach(b => b.classList.remove('selected'));
-            el.classList.add('selected');
-            selectedVariant = val;
+            el.classList.add('selected'); selectedVariant = val;
         }
-
-        function closeModal() { document.getElementById('buyModal').style.display = 'none'; }
 
         function processOrder() {
             let acc = document.getElementById('accUser').value;
             if(currentItem.type === 'gamepass') {
-                if(!acc) return alert("Nhập tên tài khoản!");
+                if(!acc) return alert("Thiếu tên tài khoản!");
                 if(balance < currentItem.price) return alert("Không đủ tiền!");
                 balance -= currentItem.price;
-                saveOrder(currentItem.name, currentItem.price, acc, "Không cần", "Thành công", "");
-                alert("Mua thành công!");
-                window.location.reload();
+                saveOrder(currentItem.name, currentItem.price, acc, "Không cần", "Thành công", "", "gamepass");
+                alert("Mua thành công!"); window.location.reload();
             } else {
                 let pass = document.getElementById('accPass').value;
                 let note = document.getElementById('materialNote').value;
-                if(!acc || !pass) return alert("Vui lòng nhập Tài khoản và Mật khẩu!");
-                if(document.getElementById('variantArea').style.display !== 'none' && !selectedVariant) return alert("Vui lòng chọn loại bạn muốn cày!");
+                if(!acc || !pass) return alert("Thiếu Acc/Pass!");
+                if(document.getElementById('variantArea').style.display !== 'none' && !selectedVariant) return alert("Chọn loại mask/tool!");
                 
-                let imgInput = document.getElementById('hiveImg');
-                let noteText = note;
-                if(imgInput.files.length > 0) noteText += " | [ĐÃ GỬI ẢNH TỔ ONG]";
-
                 let finalName = selectedVariant ? `${currentItem.name} (${selectedVariant})` : currentItem.name;
-                saveOrder(finalName, 0, acc, pass, "Đang xét giá", noteText);
-                alert("Đã gửi yêu cầu! Vui lòng chờ Admin báo giá.");
-                closeModal();
+                saveOrder(finalName, 0, acc, pass, "Đang xét giá", note, "boost");
+                alert("Đã gửi đơn! Kiểm tra chuông thông báo để nhận giá.");
+                document.getElementById('buyModal').style.display = 'none';
             }
         }
 
-        function saveOrder(name, price, acc, pass, status, note) {
+        function saveOrder(name, price, acc, pass, status, note, type) {
             localStorage.setItem('myBalance', balance);
             let history = JSON.parse(localStorage.getItem('myHistory')) || [];
-            history.unshift({ id: 'GS' + Math.floor(Math.random() * 90000), service: name, price: price, acc: acc, pass: pass, note: note, date: new Date().toLocaleString('vi-VN'), status: status });
+            history.unshift({
+                id: 'GS' + Math.floor(Math.random() * 90000),
+                type: type, // 'gamepass' hoặc 'boost'
+                service: name, price: price, acc: acc, pass: pass, note: note,
+                img: finalBase64, // Lưu ảnh đã nén
+                date: new Date().toLocaleString(), status: status
+            });
             localStorage.setItem('myHistory', JSON.stringify(history));
         }
 
-        setInterval(checkNotifications, 3000);
-        function checkNotifications() {
+        // HỆ THỐNG CHUÔNG THÔNG BÁO
+        function toggleNotif() {
+            const box = document.getElementById('notif-box');
+            box.style.display = (box.style.display === 'block') ? 'none' : 'block';
+            checkBell(); // Load lại tin nhắn
+        }
+
+        setInterval(checkBell, 2000);
+        function checkBell() {
             let history = JSON.parse(localStorage.getItem('myHistory')) || [];
-            let pendingConfirm = history.find(h => h.status === "Chờ xác nhận");
-            if(pendingConfirm) {
-                document.getElementById('notif-badge').style.display = 'flex';
-                showConfirmPopup(pendingConfirm);
+            let pendingConfirm = history.filter(h => h.status === "Chờ xác nhận");
+            
+            // Hiện chấm đỏ
+            document.getElementById('bell-dot').style.display = pendingConfirm.length > 0 ? 'block' : 'none';
+            
+            // Render nội dung
+            const contentBox = document.getElementById('notif-content');
+            contentBox.innerHTML = '';
+            if(pendingConfirm.length === 0) {
+                contentBox.innerHTML = '<p style="text-align:center; color:#999; font-size:12px">Không có thông báo mới.</p>';
             } else {
-                document.getElementById('notif-badge').style.display = 'none';
-                document.getElementById('confirmPriceBox').style.display = 'none';
+                pendingConfirm.forEach(h => {
+                    contentBox.innerHTML += `
+                        <div class="notif-item">
+                            <b>Admin báo giá:</b> ${h.service}<br>
+                            Giá: <b style="color:red">${h.price.toLocaleString()}đ</b>
+                            <div style="display:flex; gap:5px">
+                                <button class="notif-btn" style="background:#22c55e" onclick="replyPrice('${h.id}', true)">Đồng ý</button>
+                                <button class="notif-btn" style="background:#ef4444" onclick="replyPrice('${h.id}', false)">Hủy</button>
+                            </div>
+                        </div>
+                    `;
+                });
             }
         }
 
-        let currentConfirmId = null;
-        function showConfirmPopup(order) {
-            if(document.getElementById('confirmPriceBox').style.display === 'block') return;
-            document.getElementById('cfName').innerText = order.service;
-            document.getElementById('cfPrice').innerText = order.price.toLocaleString() + 'đ';
-            currentConfirmId = order.id;
-            document.getElementById('confirmPriceBox').style.display = 'block';
-        }
-
-        function userConfirmPrice(isAgree) {
-            let history = JSON.parse(localStorage.getItem('myHistory')) || [];
-            let index = history.findIndex(h => h.id === currentConfirmId);
-            if(index !== -1) {
+        function replyPrice(id, isAgree) {
+            let history = JSON.parse(localStorage.getItem('myHistory'));
+            let idx = history.findIndex(h => h.id === id);
+            if(idx !== -1) {
                 if(isAgree) {
-                    if(balance >= history[index].price) {
-                        balance -= history[index].price;
+                    if(balance >= history[idx].price) {
+                        balance -= history[idx].price;
                         localStorage.setItem('myBalance', balance);
-                        history[index].status = "Đang xử lý";
-                        alert("Đã xác nhận! Admin sẽ bắt đầu cày ngay.");
-                    } else { return alert("Số dư không đủ! Vui lòng nạp thêm."); }
+                        history[idx].status = "Đang xử lý";
+                        alert("Đã chốt đơn! Admin sẽ cày ngay.");
+                    } else { return alert("Không đủ tiền! Nạp thêm đi bạn."); }
                 } else {
-                    history[index].status = "Đã hủy";
-                    alert("Đã hủy đơn hàng.");
+                    history[idx].status = "Bị hủy";
+                    alert("Đã hủy đơn.");
                 }
                 localStorage.setItem('myHistory', JSON.stringify(history));
-                document.getElementById('confirmPriceBox').style.display = 'none';
+                checkBell();
+                document.getElementById('notif-box').style.display = 'none';
                 window.location.reload();
             }
         }
-        document.addEventListener('click', function(e) { if (!e.target.closest('.menu-toggle') && !e.target.closest('.mobile-menu')) { menuBox.classList.remove('active'); } });
+        document.addEventListener('click', function(e) { if (!e.target.closest('.bell-wrapper')) document.getElementById('notif-box').style.display = 'none'; });
     </script>
 </body>
 </html>
