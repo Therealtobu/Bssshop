@@ -193,12 +193,14 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
     <script>
-        // --- 2. CẤU HÌNH (Dán API Key của bạn vào đây) ---
+        // --- 2. CẤU HÌNH (Đã điền thông tin của bạn) ---
         const firebaseConfig = {
-            apiKey: "AIzaSyBpQ0poFExribJApkGp4poilyTfepmnj9E",  // <--- ⚠️ THAY MÃ API CỦA BẠN VÀO ĐÂY
-            authDomain: "https://gensaishop-df392-default-rtdb.asia-southeast1.firebasedatabase.app",
+            apiKey: "AIzaSyBpQ0poFExribJApkGp4poilyTfepmnj9E",
+            authDomain: "gensaishop-df392.firebaseapp.com",
             projectId: "gensaishop-df392",
             storageBucket: "gensaishop-df392.firebasestorage.app",
+            messagingSenderId: "561693794311",
+            appId: "1:561693794311:web:b1d78102189cc30ba44aa2"
         };
 
         // Khởi động Firebase
@@ -209,10 +211,10 @@
             console.log("Đã kết nối Firebase!");
         } catch (e) {
             console.error("Lỗi Firebase:", e);
-            alert("Lỗi kết nối Server: Kiểm tra lại API Key!");
+            alert("Lỗi kết nối Server! F12 xem Console.");
         }
 
-        // --- 3. KHÔI PHỤC LOGIC CŨ (GIỮ NGUYÊN UI/UX) ---
+        // --- 3. KHÔI PHỤC LOGIC CŨ ---
         
         // Kiểm tra đăng nhập
         if(!localStorage.getItem('isLoggedIn')) window.location.href = 'login.html';
@@ -221,21 +223,27 @@
 
         // Hiển thị tên
         document.getElementById('uName').innerText = uName;
-        // Ẩn số dư (vì không dùng nạp thẻ nữa)
-        if(document.getElementById('uBal')) document.getElementById('uBal').parentElement.style.display = 'none';
+        
+        // Hiện lại số dư (Lấy từ LocalStorage)
+        let currentBal = parseInt(localStorage.getItem('myBalance')) || 0;
+        const balDiv = document.getElementById('uBal');
+        const balArea = document.getElementById('balArea'); // ID div chứa số dư
+        
+        if(balDiv) balDiv.innerText = currentBal.toLocaleString();
+        if(balArea) balArea.style.display = 'block'; // Hiện lại dòng số dư
 
-        // Biến toàn cục (như script gốc)
+        // Biến toàn cục
         let currentItem = {};
         let selectedVariant = "";
         let finalBase64 = "";
 
-        // --- MENU & NAV ---
+        // --- MENU & NAV (Đã thêm mục Nạp Tiền) ---
         function loadMenu() {
             menuBox.innerHTML = `
                 <div style="padding:10px; font-size:12px; color:#888; border-bottom:1px solid #333">Acc: <b>${uName}</b></div>
                 <a href="index.html" class="menu-item">Trang chủ</a>
                 <a href="dashboard.html" class="menu-item">Shop Vật Phẩm</a>
-                <a href="history.html" class="menu-item">Lịch Sử Đơn</a>
+                <a href="deposit.html" class="menu-item">Nạp Tiền</a> <a href="history.html" class="menu-item">Lịch Sử Đơn</a>
                 <a href="#" onclick="doLogout()" class="menu-item logout" style="color:#ef4444">Đăng xuất</a>
             `;
         }
@@ -245,7 +253,7 @@
         window.toggleMenu = function() { menuBox.classList.toggle('active'); }
         window.doLogout = function() { localStorage.removeItem('isLoggedIn'); window.location.href = 'index.html'; }
 
-        // --- HÀM MỞ MODAL (Y HỆT SCRIPT GỐC) ---
+        // --- HÀM MỞ MODAL ---
         window.openModal = function(type, name, price, variants = []) {
             console.log("Mở modal:", name);
             currentItem = { type, name, price }; 
@@ -253,7 +261,10 @@
             finalBase64 = "";
             
             document.getElementById('mName').innerText = name;
-            document.getElementById('accUser').value = uName; // Tự điền tên
+            
+            // SỬA LỖI 4: ĐỂ TRỐNG Ô NHẬP TÊN
+            document.getElementById('accUser').value = ""; // Để trống cho khách tự nhập
+            
             document.getElementById('buyModal').style.display = 'flex';
             
             // Reset Upload ảnh
@@ -261,38 +272,39 @@
             document.getElementById('uploadBtnText').innerHTML = '<i class="fa-solid fa-camera"></i> Chọn ảnh tổ ong';
             document.getElementById('previewArea').style.display = 'none';
 
-            // Ẩn hiện các vùng nhập liệu (Giữ nguyên logic cũ)
+            // Xử lý giao diện Gamepass / Cày thuê
             const priceRow = document.getElementById('priceRow');
             const boostArea = document.getElementById('boostArea');
             const vArea = document.getElementById('variantArea');
             const mTitle = document.getElementById('modalTitle');
 
             if(type === 'gamepass') {
-                priceRow.style.display = 'block';
+                if(priceRow) priceRow.style.display = 'block';
                 document.getElementById('mPrice').innerText = price.toLocaleString() + 'đ';
-                boostArea.style.display = 'none';
-                vArea.style.display = 'none';
-                mTitle.innerText = "MUA GAMEPASS";
+                if(boostArea) boostArea.style.display = 'none';
+                if(vArea) vArea.style.display = 'none';
+                if(mTitle) mTitle.innerText = "MUA GAMEPASS";
             } else {
-                priceRow.style.display = 'none';
-                boostArea.style.display = 'block';
+                if(priceRow) priceRow.style.display = 'none';
+                if(boostArea) boostArea.style.display = 'block';
                 document.getElementById('accPass').value = "";
                 document.getElementById('materialNote').value = "";
-                mTitle.innerText = "ĐẶT CÀY THUÊ";
+                if(mTitle) mTitle.innerText = "ĐẶT CÀY THUÊ";
                 
-                // Tạo nút chọn biến thể (Mask/Tool...)
-                vArea.innerHTML = '';
-                if(variants && variants.length > 0) {
-                    vArea.style.display = 'flex';
-                    variants.forEach(v => { 
-                        // Tạo phần tử DOM thay vì chuỗi HTML để gán sự kiện click chuẩn hơn
-                        const btn = document.createElement('div');
-                        btn.className = 'variant-btn';
-                        btn.innerText = v;
-                        btn.onclick = function() { window.selectVar(this, v); };
-                        vArea.appendChild(btn);
-                    });
-                } else { vArea.style.display = 'none'; }
+                // Tạo nút chọn biến thể
+                if(vArea) {
+                    vArea.innerHTML = '';
+                    if(variants && variants.length > 0) {
+                        vArea.style.display = 'flex';
+                        variants.forEach(v => { 
+                            const btn = document.createElement('div');
+                            btn.className = 'variant-btn';
+                            btn.innerText = v;
+                            btn.onclick = function() { window.selectVar(this, v); };
+                            vArea.appendChild(btn);
+                        });
+                    } else { vArea.style.display = 'none'; }
+                }
             }
         }
 
@@ -303,7 +315,7 @@
             selectedVariant = val;
         }
 
-        // Nén ảnh (Giữ nguyên logic gốc)
+        // Nén ảnh
         window.compressImage = function(input) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
@@ -328,63 +340,74 @@
             }
         }
 
-        // --- 4. THAY THẾ LOCALSTORAGE BẰNG FIREBASE ---
+        // --- 4. GỬI ĐƠN HÀNG (SỬA LỖI KHÔNG GỬI ĐƯỢC) ---
 
         window.processOrder = function() {
-            if(!db) return alert("Chưa kết nối Firebase! Kiểm tra API Key.");
+            if(!db) return alert("Lỗi: Chưa kết nối được Firebase!");
+            
             const acc = document.getElementById('accUser').value;
             
-            // Logic kiểm tra y hệt cũ
             if(currentItem.type === 'gamepass') {
-                if(!acc) return alert("Vui lòng nhập Username!");
-                // Gửi Gamepass
+                if(!acc) return alert("Vui lòng nhập tên Acc Roblox cần mua!");
+                
+                // Trừ tiền ảo (Local) nếu cần
+                if(currentBal < currentItem.price) return alert("Số dư không đủ!");
+                // currentBal -= currentItem.price; // Bỏ comment nếu muốn trừ tiền thật
+                // localStorage.setItem('myBalance', currentBal);
+                
                 sendToFirebase(currentItem.name, currentItem.price, acc, "Không cần", "Chờ xử lý", "", "gamepass");
             } else {
                 let pass = document.getElementById('accPass').value;
                 let note = document.getElementById('materialNote').value;
                 
-                if(!acc || !pass) return alert("Vui lòng nhập Tài khoản và Mật khẩu!");
+                if(!acc || !pass) return alert("Vui lòng nhập đủ Tài khoản & Mật khẩu!");
                 if(document.getElementById('variantArea').style.display !== 'none' && !selectedVariant) return alert("Vui lòng chọn loại vật phẩm!");
                 
                 let finalName = selectedVariant ? `${currentItem.name} (${selectedVariant})` : currentItem.name;
                 
-                // Gửi Cày thuê (Có kèm ảnh finalBase64)
                 sendToFirebase(finalName, 0, acc, pass, "Đang xét giá", note, "boost");
             }
         }
 
         function sendToFirebase(name, price, acc, pass, status, note, type) {
             const btn = document.querySelector('.btn-primary');
+            const originalText = btn.innerText;
             btn.innerText = "Đang gửi...";
             btn.disabled = true;
 
-            // Lệnh thêm vào Firestore (Thay vì localStorage.setItem)
+            // Lệnh thêm vào Firestore
             db.collection("orders").add({
-                acc: acc,
+                shop_acc: uName, // Tên acc web mua
+                acc: acc,        // Tên acc Roblox cần làm
                 pass: pass,
                 service: name,
                 price: price,
                 note: note,
-                img: finalBase64, // Ảnh đã nén
+                img: finalBase64,
                 type: type,
                 status: status,
                 createdAt: new Date().toISOString()
             })
-            .then(() => {
+            .then((docRef) => {
+                console.log("Gửi đơn thành công, ID:", docRef.id);
                 alert("✅ Gửi đơn thành công! Admin sẽ nhận được ngay.");
                 document.getElementById('buyModal').style.display = 'none';
-                btn.innerText = "XÁC NHẬN";
-                btn.disabled = false;
             })
             .catch((error) => {
-                console.error("Lỗi:", error);
+                console.error("Lỗi gửi đơn:", error);
                 alert("Lỗi gửi đơn: " + error.message);
-                btn.innerText = "XÁC NHẬN";
+                // Gợi ý lỗi phổ biến
+                if(error.message.includes("permission")) {
+                    alert("Lỗi quyền truy cập! Bạn cần vào Firebase Console -> Firestore Database -> Rules -> Sửa 'allow read, write: if false' thành 'if true'");
+                }
+            })
+            .finally(() => {
+                btn.innerText = originalText;
                 btn.disabled = false;
             });
         }
 
-        // --- 5. HỆ THỐNG THÔNG BÁO (Dùng onSnapshot thay vì setInterval) ---
+        // --- 5. HỆ THỐNG THÔNG BÁO ---
 
         window.toggleNotif = function() {
             const box = document.getElementById('notif-box');
@@ -393,8 +416,9 @@
 
         // Lắng nghe dữ liệu thời gian thực
         if(db && uName) {
+            // Lắng nghe theo tên User Web (uName) chứ không phải acc Roblox
             db.collection("orders")
-                .where("acc", "==", uName) // Chỉ nghe đơn của user này
+                .where("shop_acc", "==", uName) 
                 .onSnapshot((snapshot) => {
                     const contentBox = document.getElementById('notif-content');
                     const bellDot = document.getElementById('bell-dot');
@@ -405,7 +429,6 @@
                         const data = doc.data();
                         const id = doc.id;
 
-                        // Nếu Admin báo giá (status = "Chờ xác nhận")
                         if(data.status === "Chờ xác nhận") {
                             hasNotif = true;
                             contentBox.innerHTML += `
@@ -421,12 +444,11 @@
                         }
                     });
 
-                    bellDot.style.display = hasNotif ? 'block' : 'none';
+                    if(bellDot) bellDot.style.display = hasNotif ? 'block' : 'none';
                     if(!hasNotif) contentBox.innerHTML = '<p style="text-align:center; color:#999; font-size:12px">Không có thông báo mới.</p>';
                 });
         }
 
-        // Phản hồi giá (Cập nhật lại Firebase)
         window.replyPrice = function(id, isAgree) {
             if(isAgree) {
                 db.collection("orders").doc(id).update({ status: "Đang xử lý" });
@@ -445,5 +467,6 @@
         });
 
     </script>
+
 </body>
-</html>
+    </html>
