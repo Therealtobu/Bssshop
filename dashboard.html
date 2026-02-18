@@ -189,13 +189,17 @@
         </div>
     </div>
 
-    <script>
+        <script>
+        // --- CẤU HÌNH ---
+        // Thay link này bằng link Render của bạn (đừng quên /api ở cuối nếu cần, nhưng code backend mình viết không cần)
+        const BACKEND_URL = 'https://gensai-backend.onrender.com'; 
+        
         // KIỂM TRA ĐĂNG NHẬP
         if(!localStorage.getItem('isLoggedIn')) window.location.href = 'login.html';
         const uName = localStorage.getItem('myUser');
-        const menuBox = document.getElementById('mainMenu');
         
         // MENU
+        const menuBox = document.getElementById('mainMenu');
         menuBox.innerHTML = `
             <div style="padding:10px; font-size:12px; color:#888; border-bottom:1px solid #333">Acc: <b>${uName}</b></div>
             <a href="index.html" class="menu-item">Trang chủ</a>
@@ -207,7 +211,7 @@
         function toggleMenu() { menuBox.classList.toggle('active'); }
         function doLogout() { localStorage.removeItem('isLoggedIn'); window.location.href = 'index.html'; }
 
-        // SỐ DƯ
+        // SỐ DƯ (Tạm thời vẫn lấy ở Local, sau này nên nâng cấp lấy từ Server)
         let balance = parseInt(localStorage.getItem('myBalance')) || 0;
         document.getElementById('uName').innerText = uName;
         document.getElementById('uBal').innerText = balance.toLocaleString();
@@ -221,7 +225,7 @@
             finalBase64 = "";
             
             document.getElementById('mName').innerText = name;
-            document.getElementById('accUser').value = "";
+            document.getElementById('accUser').value = uName; // Tự điền tên user
             document.getElementById('buyModal').style.display = 'flex';
             
             // Reset Upload
@@ -284,18 +288,23 @@
             selectedVariant = val;
         }
 
-        // XỬ LÝ ĐƠN
-        function processOrder() {
+        // --- XỬ LÝ GỬI ĐƠN LÊN SERVER ---
+        async function processOrder() {
             let acc = document.getElementById('accUser').value;
             
             if(currentItem.type === 'gamepass') {
                 if(!acc) return alert("Vui lòng nhập Username!");
                 if(balance < currentItem.price) return alert("Không đủ tiền!");
                 
+                // Trừ tiền local (Sau này trừ ở server sau)
                 balance -= currentItem.price;
-                saveOrder(currentItem.name, currentItem.price, acc, "Không cần", "Thành công", "", "gamepass");
-                alert("Mua thành công!"); 
-                window.location.reload();
+                localStorage.setItem('myBalance', balance);
+                document.getElementById('uBal').innerText = balance.toLocaleString();
+
+                await sendOrderToServer(currentItem.name, currentItem.price, acc, "Không cần", "Chờ xử lý", "", "gamepass");
+                alert("Mua thành công! Đơn đã gửi tới Admin."); 
+                document.getElementById('buyModal').style.display = 'none';
+
             } else {
                 let pass = document.getElementById('accPass').value;
                 let note = document.getElementById('materialNote').value;
@@ -304,88 +313,119 @@
                 if(document.getElementById('variantArea').style.display !== 'none' && !selectedVariant) return alert("Vui lòng chọn loại vật phẩm!");
                 
                 let finalName = selectedVariant ? `${currentItem.name} (${selectedVariant})` : currentItem.name;
-                saveOrder(finalName, 0, acc, pass, "Đang xét giá", note, "boost");
                 
-                alert("Đã gửi đơn! Vui lòng theo dõi chuông thông báo.");
+                // Gửi đơn cày thuê
+                await sendOrderToServer(finalName, 0, acc, pass, "Đang xét giá", note, "boost");
+                
+                alert("Đã gửi đơn lên hệ thống! Vui lòng theo dõi chuông thông báo.");
                 document.getElementById('buyModal').style.display = 'none';
             }
         }
 
-        function saveOrder(name, price, acc, pass, status, note, type) {
-            localStorage.setItem('myBalance', balance);
-            let history = JSON.parse(localStorage.getItem('myHistory')) || [];
-            history.unshift({
-                id: 'GS' + Math.floor(Math.random() * 90000),
-                type: type, 
-                service: name, 
-                price: price, 
-                acc: acc, 
-                pass: pass, 
+        // HÀM GỌI API BACKEND (Quan trọng nhất)
+        async function sendOrderToServer(name, price, acc, pass, status, note, type) {
+            const payload = {
+                type: type,
+                service: name,
+                acc: acc,
+                pass: pass,
                 note: note,
-                img: finalBase64, 
-                date: new Date().toLocaleString(), 
+                price: price,
+                img: finalBase64, // Ảnh đã nén
                 status: status
-            });
-            localStorage.setItem('myHistory', JSON.stringify(history));
+            };
+
+            try {
+                const res = await fetch(`${BACKEND_URL}/api/order/create`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                console.log("Server trả về:", data);
+            } catch (err) {
+                alert("Lỗi kết nối Server! Kiểm tra lại mạng.");
+                console.error(err);
+            }
         }
 
-        // HỆ THỐNG THÔNG BÁO
+        // --- HỆ THỐNG THÔNG BÁO ONLINE ---
         function toggleNotif() {
             const box = document.getElementById('notif-box');
             box.style.display = (box.style.display === 'block') ? 'none' : 'block';
-            checkBell();
+            checkBell(); // Gọi ngay khi mở
         }
 
-        setInterval(checkBell, 2000); 
-        function checkBell() {
-            let history = JSON.parse(localStorage.getItem('myHistory')) || [];
-            let pendingConfirm = history.filter(h => h.status === "Chờ xác nhận");
-            
-            document.getElementById('bell-dot').style.display = pendingConfirm.length > 0 ? 'block' : 'none';
-            const contentBox = document.getElementById('notif-content');
-            contentBox.innerHTML = '';
-            
-            if(pendingConfirm.length === 0) {
-                contentBox.innerHTML = '<p style="text-align:center; color:#999; font-size:12px">Không có thông báo mới.</p>';
-            } else {
-                pendingConfirm.forEach(h => {
-                    contentBox.innerHTML += `
-                        <div class="notif-item" style="border-bottom:1px solid #333; padding-bottom:10px; margin-bottom:10px">
-                            <b style="color:#fff">Admin báo giá:</b> ${h.service}<br>
-                            Giá chốt: <b style="color:#ef4444">${h.price.toLocaleString()}đ</b>
-                            <div style="display:flex; gap:5px">
-                                <button class="notif-btn" style="background:#22c55e; color:#fff" onclick="replyPrice('${h.id}', true)">Đồng ý</button>
-                                <button class="notif-btn" style="background:#ef4444; color:#fff" onclick="replyPrice('${h.id}', false)">Hủy</button>
-                            </div>
-                        </div>
-                    `;
-                });
-            }
-        }
+        // Kiểm tra thông báo mỗi 5 giây
+        setInterval(checkBell, 5000); 
 
-        function replyPrice(id, isAgree) {
-            let history = JSON.parse(localStorage.getItem('myHistory'));
-            let idx = history.findIndex(h => h.id === id);
-            
-            if(idx !== -1) {
-                if(isAgree) {
-                    if(balance >= history[idx].price) {
-                        balance -= history[idx].price;
-                        localStorage.setItem('myBalance', balance);
-                        history[idx].status = "Đang xử lý";
-                        alert("Đã chốt đơn!");
-                    } else { 
-                        return alert("Số dư không đủ!"); 
-                    }
+        async function checkBell() {
+            try {
+                // Lấy danh sách đơn từ Server về
+                const res = await fetch(`${BACKEND_URL}/api/order/list`);
+                const allOrders = await res.json();
+                
+                // Lọc ra đơn của user hiện tại (Dựa theo tên Acc Roblox)
+                // Lưu ý: Đây là cách tạm thời. Đúng ra phải có API /my-orders
+                const myOrders = allOrders.filter(o => o.acc === uName);
+                
+                // Tìm các đơn Admin đã báo giá (Status = 'Chờ xác nhận')
+                const pendingConfirm = myOrders.filter(o => o.status === "Chờ xác nhận");
+
+                document.getElementById('bell-dot').style.display = pendingConfirm.length > 0 ? 'block' : 'none';
+                const contentBox = document.getElementById('notif-content');
+                contentBox.innerHTML = '';
+                
+                if(pendingConfirm.length === 0) {
+                    contentBox.innerHTML = '<p style="text-align:center; color:#999; font-size:12px">Không có thông báo mới.</p>';
                 } else {
-                    history[idx].status = "Bị hủy";
-                    alert("Đã hủy đơn hàng.");
+                    pendingConfirm.forEach(h => {
+                        contentBox.innerHTML += `
+                            <div class="notif-item" style="border-bottom:1px solid #333; padding-bottom:10px; margin-bottom:10px">
+                                <b style="color:#fff">Admin báo giá:</b> ${h.service}<br>
+                                Giá chốt: <b style="color:#ef4444">${h.price.toLocaleString()}đ</b>
+                                <div style="display:flex; gap:5px; margin-top:5px;">
+                                    <button class="notif-btn" style="background:#22c55e; color:#fff; border:none; padding:5px; border-radius:3px; cursor:pointer" onclick="replyPrice('${h._id}', true, ${h.price})">Đồng ý</button>
+                                    <button class="notif-btn" style="background:#ef4444; color:#fff; border:none; padding:5px; border-radius:3px; cursor:pointer" onclick="replyPrice('${h._id}', false, 0)">Hủy</button>
+                                </div>
+                            </div>
+                        `;
+                    });
                 }
-                localStorage.setItem('myHistory', JSON.stringify(history));
-                checkBell();
-                document.getElementById('notif-box').style.display = 'none';
-                window.location.reload();
+            } catch (err) {
+                console.log("Lỗi check thông báo");
             }
+        }
+
+        // USER PHẢN HỒI GIÁ
+        async function replyPrice(id, isAgree, price) {
+            if(isAgree) {
+                if(balance >= price) {
+                    balance -= price;
+                    localStorage.setItem('myBalance', balance);
+                    document.getElementById('uBal').innerText = balance.toLocaleString();
+                    
+                    // Gửi cập nhật lên Server
+                    await updateOrderStatus(id, "Đang xử lý");
+                    alert("Đã chốt đơn! Admin sẽ bắt đầu cày.");
+                } else { 
+                    return alert("Số dư không đủ! Vui lòng nạp thêm."); 
+                }
+            } else {
+                await updateOrderStatus(id, "Bị hủy");
+                alert("Đã hủy đơn hàng.");
+            }
+            
+            document.getElementById('notif-box').style.display = 'none';
+            checkBell(); // Load lại thông báo
+        }
+
+        async function updateOrderStatus(id, status) {
+            await fetch(`${BACKEND_URL}/api/order/update`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ id: id, status: status })
+            });
         }
 
         document.addEventListener('click', function(e) { 
@@ -393,5 +433,3 @@
             if (!e.target.closest('.menu-toggle') && !e.target.closest('.mobile-menu')) document.getElementById('mainMenu').classList.remove('active');
         });
     </script>
-</body>
-</html>
