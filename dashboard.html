@@ -189,13 +189,13 @@
         </div>
     </div>
 
-     <script type="module">
-    // 1. DÁN CẤU HÌNH FIREBASE CỦA BẠN VÀO ĐÂY
+<script type="module">
+    // --- 1. CẤU HÌNH FIREBASE (Dán cái bạn vừa tìm được vào đây) ---
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, query, where, onSnapshot, doc, updateDoc, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyBpQ0poFExribJApkGp4poilyTfepmnj9E",  // <--- THAY CÁI CỦA BẠN VÀO ĐÂY
+    // ⚠️ QUAN TRỌNG: Bạn thay mã API của bạn vào chỗ này nhé!
+apiKey: "AIzaSyBpQ0poFExribJApkGp4poilyTfepmnj9E",  // <--- THAY CÁI CỦA BẠN VÀO ĐÂY
         authDomain: "gensaishop-df392.firebaseapp.com",
         projectId: "gensaishop-df392",
         storageBucket: "gensaishop-df392.firebasestorage.app",
@@ -207,68 +207,230 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // --- LOGIC CŨ GIỮ NGUYÊN ---
+    // --- 2. LOGIC CŨ (GIỮ NGUYÊN) ---
     if(!localStorage.getItem('isLoggedIn')) window.location.href = 'login.html';
     const uName = localStorage.getItem('myUser');
-    document.getElementById('uName').innerText = uName;
+    
+    // MENU
+    const menuBox = document.getElementById('mainMenu');
+    menuBox.innerHTML = `
+        <div style="padding:10px; font-size:12px; color:#888; border-bottom:1px solid #333">Acc: <b>${uName}</b></div>
+        <a href="index.html" class="menu-item">Trang chủ</a>
+        <a href="dashboard.html" class="menu-item">Shop Vật Phẩm</a>
+        <a href="history.html" class="menu-item">Lịch Sử Đơn</a>
+        <a href="#" onclick="window.doLogout()" class="menu-item logout" style="color:#ef4444">Đăng xuất</a>
+    `;
 
-    // --- HÀM GỬI ĐƠN (SỬA LẠI DÙNG FIREBASE) ---
+    // Gán hàm vào window để HTML gọi được (Do dùng module)
+    window.toggleMenu = () => menuBox.classList.toggle('active');
+    window.doLogout = () => { localStorage.removeItem('isLoggedIn'); window.location.href = 'index.html'; };
+
+    // SỐ DƯ (Tạm thời ẩn đi vì không nạp nữa)
+    document.getElementById('uName').innerText = uName;
+    document.getElementById('uBal').parentElement.style.display = 'none'; 
+
+    // Biến toàn cục
+    let currentItem = {};
+    let selectedVariant = "";
+    let finalBase64 = ""; // Biến chứa ảnh tổ ong
+
+    // --- 3. CÁC HÀM XỬ LÝ GIAO DIỆN ---
+    
+    // Mở Modal
+    window.openModal = function(type, name, price, variants = []) {
+        currentItem = { type, name, price }; 
+        selectedVariant = ""; 
+        finalBase64 = ""; // Reset ảnh
+        
+        document.getElementById('mName').innerText = name;
+        document.getElementById('accUser').value = uName; // Tự điền tên user
+        document.getElementById('buyModal').style.display = 'flex';
+        
+        // Reset Upload ảnh
+        document.getElementById('hiveImg').value = "";
+        document.getElementById('uploadBtnText').innerHTML = '<i class="fa-solid fa-camera"></i> Chọn ảnh tổ ong';
+        document.getElementById('previewArea').style.display = 'none';
+
+        // Ẩn hiện các ô nhập liệu tùy theo Gamepass hay Cày thuê
+        if(type === 'gamepass') {
+            document.getElementById('priceRow').style.display = 'block';
+            document.getElementById('mPrice').innerText = price.toLocaleString() + 'đ';
+            document.getElementById('boostArea').style.display = 'none';
+            document.getElementById('variantArea').style.display = 'none';
+            document.getElementById('modalTitle').innerText = "MUA GAMEPASS";
+        } else {
+            document.getElementById('priceRow').style.display = 'none';
+            document.getElementById('boostArea').style.display = 'block';
+            document.getElementById('accPass').value = "";
+            document.getElementById('materialNote').value = "";
+            document.getElementById('modalTitle').innerText = "ĐẶT CÀY THUÊ";
+            
+            // Xử lý nút chọn loại (Mask, Tool...)
+            const vArea = document.getElementById('variantArea'); 
+            vArea.innerHTML = '';
+            if(variants.length > 0) {
+                vArea.style.display = 'flex';
+                variants.forEach(v => { 
+                    vArea.innerHTML += `<div class="variant-btn" onclick="window.selectVar(this, '${v}')">${v}</div>`; 
+                });
+            } else { vArea.style.display = 'none'; }
+        }
+    }
+
+    // Chọn biến thể (Mask, Tool...)
+    window.selectVar = function(el, val) {
+        document.querySelectorAll('.variant-btn').forEach(b => b.classList.remove('selected'));
+        el.classList.add('selected'); 
+        selectedVariant = val;
+    }
+
+    // NÉN ẢNH (Quan trọng: Giữ nguyên để lấy finalBase64)
+    window.compressImage = function(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const img = new Image();
+                img.src = e.target.result;
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    const maxWidth = 300; // Nén nhỏ lại còn 300px
+                    const scaleSize = maxWidth / img.width;
+                    canvas.width = maxWidth;
+                    canvas.height = img.height * scaleSize;
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    
+                    // Lưu kết quả vào biến finalBase64 để gửi đi
+                    finalBase64 = canvas.toDataURL('image/jpeg', 0.7);
+                    
+                    document.getElementById('imgPreview').src = finalBase64;
+                    document.getElementById('previewArea').style.display = 'block';
+                    document.getElementById('uploadBtnText').innerText = "Đã chọn ảnh!";
+                }
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    // --- 4. GỬI ĐƠN LÊN FIREBASE (THAY CHO LOCALSTORAGE) ---
     window.processOrder = async function() {
         const acc = document.getElementById('accUser').value;
-        const pass = document.getElementById('accPass').value || "Không cần";
-        const note = document.getElementById('materialNote') ? document.getElementById('materialNote').value : "";
-        
-        if(!acc) return alert("Nhập tên acc!");
+        const btn = document.querySelector('.btn-primary');
 
+        if(currentItem.type === 'gamepass') {
+            if(!acc) return alert("Thiếu tên Acc!");
+            
+            // Gửi Gamepass
+            await sendToFirebase(currentItem.name, currentItem.price, acc, "Không cần", "Chờ xử lý", "", "gamepass");
+        
+        } else {
+            // Lấy thông tin Cày thuê (Pass, Note, Ảnh)
+            let pass = document.getElementById('accPass').value;
+            let note = document.getElementById('materialNote').value;
+            
+            if(!acc || !pass) return alert("Vui lòng nhập Tài khoản và Mật khẩu!");
+            if(document.getElementById('variantArea').style.display !== 'none' && !selectedVariant) return alert("Vui lòng chọn loại vật phẩm!");
+            
+            let finalName = selectedVariant ? `${currentItem.name} (${selectedVariant})` : currentItem.name;
+            
+            // Gửi Cày thuê (Kèm ảnh finalBase64)
+            await sendToFirebase(finalName, 0, acc, pass, "Đang xét giá", note, "boost");
+        }
+    }
+
+    // Hàm chung để đẩy dữ liệu lên Firebase
+    async function sendToFirebase(name, price, acc, pass, status, note, type) {
         const btn = document.querySelector('.btn-primary');
         btn.innerText = "Đang gửi...";
         btn.disabled = true;
 
         try {
-            // Ghi thẳng vào Firebase (Không cần qua Render nữa)
             await addDoc(collection(db, "orders"), {
                 acc: acc,
-                pass: pass,
-                service: window.currentItem.name,
-                price: window.currentItem.price,
-                type: window.currentItem.type,
-                note: note,
-                status: window.currentItem.type === 'gamepass' ? 'Chờ xử lý' : 'Đang xét giá',
-                createdAt: new Date().toISOString() // Lưu thời gian
+                pass: pass,           // Gửi Mật khẩu
+                service: name,
+                price: price,
+                note: note,           // Gửi Ghi chú
+                img: finalBase64,     // Gửi Ảnh tổ ong
+                type: type,
+                status: status,
+                createdAt: new Date().toISOString()
             });
-
-            alert("Gửi đơn thành công! Admin đã nhận được ngay lập tức.");
+            
+            alert("✅ Đã gửi đơn thành công! Admin nhận được ngay lập tức.");
             document.getElementById('buyModal').style.display = 'none';
         } catch (e) {
             console.error(e);
-            alert("Lỗi gửi đơn: " + e.message);
+            alert("Lỗi: " + e.message);
         }
+
         btn.innerText = "XÁC NHẬN";
         btn.disabled = false;
     }
 
-    // --- HÀM THÔNG BÁO REAL-TIME (CỰC XỊN) ---
-    // Tự động báo chuông khi Admin đổi trạng thái đơn của user này
-    const q = query(
-        collection(db, "orders"), 
-        where("acc", "==", uName), // Chỉ lấy đơn của user này
-        where("status", "==", "Chờ xác nhận") // Chỉ lấy đơn Admin vừa báo giá
-    );
 
-    // onSnapshot: Luôn lắng nghe, server đổi cái là đây chạy ngay
+    // --- 5. HỆ THỐNG THÔNG BÁO REAL-TIME ---
+    window.toggleNotif = () => {
+        const box = document.getElementById('notif-box');
+        box.style.display = (box.style.display === 'block') ? 'none' : 'block';
+    }
+
+    // Lắng nghe thay đổi từ Firebase (Chỉ nghe đơn của mình)
+    const q = query(collection(db, "orders"), where("acc", "==", uName));
+    
     onSnapshot(q, (snapshot) => {
-        if(!snapshot.empty) {
-            document.getElementById('bell-dot').style.display = 'block';
-            // Code hiện thông báo vào box... (như cũ)
-        }
+        const contentBox = document.getElementById('notif-content');
+        let hasNotif = false;
+        contentBox.innerHTML = '';
+
+        snapshot.forEach((doc) => {
+            const data = doc.data();
+            const id = doc.id;
+
+            // Nếu đơn ở trạng thái "Chờ xác nhận" (Admin vừa báo giá)
+            if(data.status === "Chờ xác nhận") {
+                hasNotif = true;
+                contentBox.innerHTML += `
+                    <div class="notif-item" style="border-bottom:1px solid #333; padding:10px 0;">
+                        <b style="color:#fff">Admin báo giá:</b> ${data.service}<br>
+                        Giá chốt: <b style="color:#ef4444">${data.price.toLocaleString()}đ</b>
+                        <div style="display:flex; gap:5px; margin-top:5px">
+                            <button onclick="window.replyPrice('${id}', true)" style="background:#22c55e; color:white; border:none; padding:5px; border-radius:4px; cursor:pointer">Đồng ý</button>
+                            <button onclick="window.replyPrice('${id}', false)" style="background:#ef4444; color:white; border:none; padding:5px; border-radius:4px; cursor:pointer">Hủy</button>
+                        </div>
+                    </div>
+                `;
+            }
+        });
+
+        document.getElementById('bell-dot').style.display = hasNotif ? 'block' : 'none';
+        if(!hasNotif) contentBox.innerHTML = '<p style="text-align:center; color:#999; font-size:12px">Không có thông báo mới.</p>';
     });
 
-    // Các hàm phụ trợ khác (openModal, toggleMenu...) giữ nguyên
-    window.openModal = function(type, name, price) {
-        // ... (Copy code cũ vào đây hoặc để bên ngoài module nhưng gán vào window)
-        window.currentItem = { type, name, price };
-        document.getElementById('mName').innerText = name;
-        document.getElementById('buyModal').style.display = 'flex';
-        // ...
+    // Khách phản hồi giá
+    window.replyPrice = async (id, isAgree) => {
+        try {
+            if(isAgree) {
+                // Khách đồng ý -> Chuyển trạng thái sang "Đang xử lý" để Admin làm
+                await updateDoc(doc(db, "orders", id), { status: "Đang xử lý" });
+                alert("Đã chốt đơn! Admin sẽ bắt đầu cày.");
+            } else {
+                // Khách hủy
+                await updateDoc(doc(db, "orders", id), { status: "Khách hủy" });
+                alert("Đã hủy đơn.");
+            }
+            document.getElementById('notif-box').style.display = 'none';
+        } catch (e) {
+            alert("Lỗi kết nối.");
+        }
     }
+
+    // Đóng menu khi click ra ngoài
+    document.addEventListener('click', function(e) { 
+        if (!e.target.closest('.bell-wrapper')) document.getElementById('notif-box').style.display = 'none'; 
+        if (!e.target.closest('.menu-toggle') && !e.target.closest('.mobile-menu')) document.getElementById('mainMenu').classList.remove('active');
+    });
+
 </script>
+</body>
+    </html>
