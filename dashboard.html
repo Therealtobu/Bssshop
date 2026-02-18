@@ -189,158 +189,161 @@
         </div>
     </div>
 
-<script type="module">
-    // --- 1. KẾT NỐI FIREBASE ---
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, query, where, onSnapshot, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
-    // 👇 DÁN API KEY CỦA BẠN VÀO ĐÂY 👇
-    apiKey: "AIzaSyBpQ0poFExribJApkGp4poilyTfepmnj9E",  // <--- THAY CÁI CỦA BẠN VÀO ĐÂY
+    <script>
+        // 2. CẤU HÌNH (Dán API Key của bạn vào đây)
+apiKey: "AIzaSyBpQ0poFExribJApkGp4poilyTfepmnj9E",  // <--- THAY CÁI CỦA BẠN VÀO ĐÂY
         authDomain: "gensaishop-df392.firebaseapp.com",
         projectId: "gensaishop-df392",
         storageBucket: "gensaishop-df392.firebasestorage.app",
         messagingSenderId: "561693794311",
         appId: "1:561693794311:web:b1d78102189cc30ba44aa2"
-    };
+        };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+        // Khởi động Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        console.log("Firebase đã kết nối thành công!");
 
-    console.log("Firebase đã kết nối!"); // Kiểm tra xem code có chạy không
-
-    // --- 2. CÁC BIẾN TOÀN CỤC ---
-    if(!localStorage.getItem('isLoggedIn')) window.location.href = 'login.html';
-    const uName = localStorage.getItem('myUser');
-    let currentItem = {};
-    let selectedVariant = "";
-    let finalBase64 = "";
-
-    // Hiển thị thông tin User
-    document.getElementById('uName').innerText = uName;
-    document.getElementById('uBal').parentElement.style.display = 'none';
-
-    // --- 3. ĐỊNH NGHĨA CÁC HÀM XỬ LÝ (Gán vào window) ---
-
-    // Hàm 1: Mở Menu
-    window.toggleMenu = function() {
-        document.getElementById('mainMenu').classList.toggle('active');
-    }
-
-    // Hàm 2: Đăng xuất
-    window.doLogout = function() {
-        localStorage.removeItem('isLoggedIn');
-        window.location.href = 'index.html';
-    }
-
-    // Hàm 3: Mở Modal Mua/Đặt đơn
-    window.openModal = function(type, name, price, variants = []) {
-        console.log("Đang mở modal:", name); // Log kiểm tra
-        currentItem = { type, name, price };
-        selectedVariant = "";
-        finalBase64 = "";
+        // 3. KIỂM TRA ĐĂNG NHẬP & HIỂN THỊ TÊN
+        const uName = localStorage.getItem('myUser');
         
-        document.getElementById('mName').innerText = name;
-        document.getElementById('accUser').value = uName;
-        document.getElementById('buyModal').style.display = 'flex';
-        
-        // Reset form
-        document.getElementById('hiveImg').value = "";
-        document.getElementById('uploadBtnText').innerHTML = '<i class="fa-solid fa-camera"></i> Chọn ảnh tổ ong';
-        document.getElementById('previewArea').style.display = 'none';
-
-        if(type === 'gamepass') {
-            document.getElementById('priceRow').style.display = 'block';
-            document.getElementById('mPrice').innerText = price.toLocaleString() + 'đ';
-            document.getElementById('boostArea').style.display = 'none';
-            document.getElementById('variantArea').style.display = 'none';
-            document.getElementById('modalTitle').innerText = "MUA GAMEPASS";
+        // Nếu không có tên user -> Đá về trang login ngay
+        if (!uName) {
+            alert("Bạn chưa đăng nhập!");
+            window.location.href = 'login.html';
         } else {
-            document.getElementById('priceRow').style.display = 'none';
-            document.getElementById('boostArea').style.display = 'block';
-            document.getElementById('accPass').value = "";
-            document.getElementById('materialNote').value = "";
-            document.getElementById('modalTitle').innerText = "ĐẶT CÀY THUÊ";
-            
-            // Xử lý nút chọn biến thể
-            const vArea = document.getElementById('variantArea');
-            vArea.innerHTML = '';
-            if(variants && variants.length > 0) {
-                vArea.style.display = 'flex';
-                variants.forEach(v => {
-                    // Tạo nút chọn bằng HTML string có onclick gọi window.selectVar
-                    let btn = document.createElement('div');
-                    btn.className = 'variant-btn';
-                    btn.innerText = v;
-                    btn.onclick = function() { window.selectVar(this, v); };
-                    vArea.appendChild(btn);
-                });
-            } else { 
-                vArea.style.display = 'none'; 
+            // Nếu có tên -> Hiển thị lên web (Thay thế dấu ...)
+            document.getElementById('uName').innerText = uName;
+            // Ẩn số dư cũ đi
+            if(document.getElementById('uBal')) {
+                document.getElementById('uBal').parentElement.style.display = 'none';
             }
         }
-    }
 
-    // Hàm 4: Chọn biến thể (Mask/Tool)
-    window.selectVar = function(el, val) {
-        document.querySelectorAll('.variant-btn').forEach(b => b.classList.remove('selected'));
-        el.classList.add('selected');
-        selectedVariant = val;
-    }
+        // --- CÁC BIẾN TOÀN CỤC ---
+        let currentItem = {};
+        let selectedVariant = "";
+        let finalBase64 = "";
 
-    // Hàm 5: Nén ảnh
-    window.compressImage = function(input) {
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                const img = new Image();
-                img.src = e.target.result;
-                img.onload = function() {
-                    const canvas = document.createElement('canvas');
-                    const ctx = canvas.getContext('2d');
-                    const maxWidth = 300; 
-                    const scaleSize = maxWidth / img.width;
-                    canvas.width = maxWidth;
-                    canvas.height = img.height * scaleSize;
-                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    finalBase64 = canvas.toDataURL('image/jpeg', 0.7);
-                    
-                    document.getElementById('imgPreview').src = finalBase64;
-                    document.getElementById('previewArea').style.display = 'block';
-                    document.getElementById('uploadBtnText').innerText = "Đã chọn ảnh!";
+        // --- 4. ĐỊNH NGHĨA HÀM (Viết kiểu này HTML gọi được ngay) ---
+
+        // Hàm mở Menu
+        function toggleMenu() {
+            document.getElementById('mainMenu').classList.toggle('active');
+        }
+
+        // Hàm Đăng xuất
+        function doLogout() {
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('myUser');
+            window.location.href = 'index.html';
+        }
+
+        // Hàm mở Modal Mua
+        function openModal(type, name, price, variants = []) {
+            currentItem = { type, name, price };
+            selectedVariant = "";
+            finalBase64 = ""; // Reset ảnh
+
+            document.getElementById('mName').innerText = name;
+            document.getElementById('accUser').value = uName; // Tự điền tên
+            document.getElementById('buyModal').style.display = 'flex';
+
+            // Reset form
+            document.getElementById('hiveImg').value = "";
+            document.getElementById('uploadBtnText').innerHTML = '<i class="fa-solid fa-camera"></i> Chọn ảnh tổ ong';
+            document.getElementById('previewArea').style.display = 'none';
+
+            if(type === 'gamepass') {
+                document.getElementById('priceRow').style.display = 'block';
+                document.getElementById('mPrice').innerText = price.toLocaleString() + 'đ';
+                document.getElementById('boostArea').style.display = 'none';
+                document.getElementById('variantArea').style.display = 'none';
+                document.getElementById('modalTitle').innerText = "MUA GAMEPASS";
+            } else {
+                document.getElementById('priceRow').style.display = 'none';
+                document.getElementById('boostArea').style.display = 'block';
+                document.getElementById('accPass').value = "";
+                document.getElementById('materialNote').value = "";
+                document.getElementById('modalTitle').innerText = "ĐẶT CÀY THUÊ";
+
+                const vArea = document.getElementById('variantArea');
+                vArea.innerHTML = '';
+                if(variants && variants.length > 0) {
+                    vArea.style.display = 'flex';
+                    variants.forEach(v => {
+                        vArea.innerHTML += `<div class="variant-btn" onclick="selectVar(this, '${v}')">${v}</div>`;
+                    });
+                } else {
+                    vArea.style.display = 'none';
                 }
-            };
-            reader.readAsDataURL(input.files[0]);
+            }
         }
-    }
 
-    // Hàm 6: GỬI ĐƠN (QUAN TRỌNG)
-    window.processOrder = async function() {
-        const acc = document.getElementById('accUser').value;
-        const btn = document.querySelector('.btn-primary');
-
-        if(currentItem.type === 'gamepass') {
-            if(!acc) return alert("Thiếu tên Acc!");
-            await sendToFirebase(currentItem.name, currentItem.price, acc, "Không cần", "Chờ xử lý", "", "gamepass");
-        } else {
-            let pass = document.getElementById('accPass').value;
-            let note = document.getElementById('materialNote').value;
-            
-            if(!acc || !pass) return alert("Nhập đủ Tài khoản & Mật khẩu!");
-            if(document.getElementById('variantArea').style.display !== 'none' && !selectedVariant) return alert("Vui lòng chọn loại vật phẩm!");
-            
-            let finalName = selectedVariant ? `${currentItem.name} (${selectedVariant})` : currentItem.name;
-            await sendToFirebase(finalName, 0, acc, pass, "Đang xét giá", note, "boost");
+        // Hàm chọn biến thể
+        function selectVar(el, val) {
+            document.querySelectorAll('.variant-btn').forEach(b => b.classList.remove('selected'));
+            el.classList.add('selected');
+            selectedVariant = val;
         }
-    }
 
-    // Hàm phụ: Đẩy lên Firebase
-    async function sendToFirebase(name, price, acc, pass, status, note, type) {
-        const btn = document.querySelector('.btn-primary');
-        btn.innerText = "Đang gửi...";
-        btn.disabled = true;
+        // Hàm nén ảnh
+        function compressImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const img = new Image();
+                    img.src = e.target.result;
+                    img.onload = function() {
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        const maxWidth = 300;
+                        const scaleSize = maxWidth / img.width;
+                        canvas.width = maxWidth;
+                        canvas.height = img.height * scaleSize;
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        finalBase64 = canvas.toDataURL('image/jpeg', 0.7);
+                        
+                        document.getElementById('imgPreview').src = finalBase64;
+                        document.getElementById('previewArea').style.display = 'block';
+                        document.getElementById('uploadBtnText').innerText = "Đã chọn ảnh!";
+                    }
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
 
-        try {
-            await addDoc(collection(db, "orders"), {
+        // Hàm GỬI ĐƠN (Xử lý chính)
+        function processOrder() {
+            const acc = document.getElementById('accUser').value;
+            const btn = document.querySelector('.btn-primary');
+            
+            // Validate
+            if(currentItem.type === 'gamepass') {
+                if(!acc) return alert("Thiếu tên Acc!");
+                sendToFirebase(currentItem.name, currentItem.price, acc, "Không cần", "Chờ xử lý", "", "gamepass");
+            } else {
+                let pass = document.getElementById('accPass').value;
+                let note = document.getElementById('materialNote').value;
+                
+                if(!acc || !pass) return alert("Vui lòng điền Tài khoản & Mật khẩu!");
+                if(document.getElementById('variantArea').style.display !== 'none' && !selectedVariant) return alert("Vui lòng chọn loại!");
+                
+                let finalName = selectedVariant ? `${currentItem.name} (${selectedVariant})` : currentItem.name;
+                sendToFirebase(finalName, 0, acc, pass, "Đang xét giá", note, "boost");
+            }
+        }
+
+        // Đẩy lên Firebase (Dùng cú pháp compat v8)
+        function sendToFirebase(name, price, acc, pass, status, note, type) {
+            const btn = document.querySelector('.btn-primary');
+            btn.innerText = "Đang gửi...";
+            btn.disabled = true;
+
+            db.collection("orders").add({
                 acc: acc,
                 pass: pass,
                 service: name,
@@ -350,78 +353,86 @@
                 type: type,
                 status: status,
                 createdAt: new Date().toISOString()
+            })
+            .then((docRef) => {
+                alert("✅ Gửi đơn thành công!");
+                document.getElementById('buyModal').style.display = 'none';
+                btn.innerText = "XÁC NHẬN";
+                btn.disabled = false;
+            })
+            .catch((error) => {
+                console.error("Lỗi:", error);
+                alert("Lỗi: " + error.message);
+                btn.innerText = "XÁC NHẬN";
+                btn.disabled = false;
             });
-            alert("✅ Gửi đơn thành công!");
-            document.getElementById('buyModal').style.display = 'none';
-        } catch (e) {
-            console.error(e);
-            alert("Lỗi: " + e.message);
         }
-        btn.innerText = "XÁC NHẬN";
-        btn.disabled = false;
-    }
 
-    // Hàm 7: Thông báo & Menu
-    window.toggleNotif = function() {
-        const box = document.getElementById('notif-box');
-        box.style.display = (box.style.display === 'block') ? 'none' : 'block';
-    }
+        // Hàm bật/tắt thông báo
+        function toggleNotif() {
+            const box = document.getElementById('notif-box');
+            box.style.display = (box.style.display === 'block') ? 'none' : 'block';
+        }
 
-    // --- 4. KHỞI TẠO GIAO DIỆN ---
-    const menuBox = document.getElementById('mainMenu');
-    menuBox.innerHTML = `
-        <div style="padding:10px; font-size:12px; color:#888; border-bottom:1px solid #333">Acc: <b>${uName}</b></div>
-        <a href="index.html" class="menu-item">Trang chủ</a>
-        <a href="dashboard.html" class="menu-item">Shop Vật Phẩm</a>
-        <a href="history.html" class="menu-item">Lịch Sử Đơn</a>
-        <a href="#" onclick="window.doLogout()" class="menu-item logout" style="color:#ef4444">Đăng xuất</a>
-    `;
+        // --- 5. KHỞI TẠO MENU ---
+        const menuBox = document.getElementById('mainMenu');
+        menuBox.innerHTML = `
+            <div style="padding:10px; font-size:12px; color:#888; border-bottom:1px solid #333">Acc: <b>${uName}</b></div>
+            <a href="index.html" class="menu-item">Trang chủ</a>
+            <a href="dashboard.html" class="menu-item">Shop Vật Phẩm</a>
+            <a href="history.html" class="menu-item">Lịch Sử Đơn</a>
+            <a href="#" onclick="doLogout()" class="menu-item logout" style="color:#ef4444">Đăng xuất</a>
+        `;
 
-    // --- 5. LẮNG NGHE THÔNG BÁO ---
-    const q = query(collection(db, "orders"), where("acc", "==", uName));
-    onSnapshot(q, (snapshot) => {
-        const contentBox = document.getElementById('notif-content');
-        let hasNotif = false;
-        contentBox.innerHTML = '';
+        // --- 6. LẮNG NGHE THÔNG BÁO REAL-TIME ---
+        if(uName) {
+            db.collection("orders").where("acc", "==", uName)
+                .onSnapshot((snapshot) => {
+                    const contentBox = document.getElementById('notif-content');
+                    let hasNotif = false;
+                    contentBox.innerHTML = '';
 
-        snapshot.forEach((docSnap) => {
-            const data = docSnap.data();
-            const id = docSnap.id;
-            if(data.status === "Chờ xác nhận") {
-                hasNotif = true;
-                contentBox.innerHTML += `
-                    <div class="notif-item" style="border-bottom:1px solid #333; padding:10px 0;">
-                        <b style="color:#fff">Admin báo giá:</b> ${data.service}<br>
-                        Giá: <b style="color:#ef4444">${data.price.toLocaleString()}đ</b>
-                        <div style="display:flex; gap:5px; margin-top:5px">
-                            <button onclick="window.replyPrice('${id}', true)" style="background:#22c55e; border:none; color:white; padding:5px;">Đồng ý</button>
-                            <button onclick="window.replyPrice('${id}', false)" style="background:#ef4444; border:none; color:white; padding:5px;">Hủy</button>
-                        </div>
-                    </div>`;
+                    snapshot.forEach((doc) => {
+                        const data = doc.data();
+                        const id = doc.id;
+
+                        if(data.status === "Chờ xác nhận") {
+                            hasNotif = true;
+                            contentBox.innerHTML += `
+                                <div class="notif-item" style="border-bottom:1px solid #333; padding:10px 0;">
+                                    <b style="color:#fff">Admin báo giá:</b> ${data.service}<br>
+                                    Giá: <b style="color:#ef4444">${data.price.toLocaleString()}đ</b>
+                                    <div style="display:flex; gap:5px; margin-top:5px">
+                                        <button onclick="replyPrice('${id}', true)" style="background:#22c55e; border:none; color:white; padding:5px;">Đồng ý</button>
+                                        <button onclick="replyPrice('${id}', false)" style="background:#ef4444; border:none; color:white; padding:5px;">Hủy</button>
+                                    </div>
+                                </div>`;
+                        }
+                    });
+
+                    document.getElementById('bell-dot').style.display = hasNotif ? 'block' : 'none';
+                    if(!hasNotif) contentBox.innerHTML = '<p style="text-align:center; color:#999; font-size:12px">Không có thông báo mới.</p>';
+                });
+        }
+
+        // Phản hồi giá
+        function replyPrice(id, isAgree) {
+            if(isAgree) {
+                db.collection("orders").doc(id).update({ status: "Đang xử lý" });
+                alert("Đã chốt đơn!");
+            } else {
+                db.collection("orders").doc(id).update({ status: "Khách hủy" });
+                alert("Đã hủy đơn.");
             }
-        });
-        document.getElementById('bell-dot').style.display = hasNotif ? 'block' : 'none';
-        if(!hasNotif) contentBox.innerHTML = '<p style="text-align:center; color:#999; font-size:12px">Không có thông báo mới.</p>';
-    });
-
-    // Hàm phản hồi giá
-    window.replyPrice = async function(id, isAgree) {
-        if(isAgree) {
-            await updateDoc(doc(db, "orders", id), { status: "Đang xử lý" });
-            alert("Đã chốt đơn!");
-        } else {
-            await updateDoc(doc(db, "orders", id), { status: "Khách hủy" });
-            alert("Đã hủy đơn.");
+            document.getElementById('notif-box').style.display = 'none';
         }
-        document.getElementById('notif-box').style.display = 'none';
-    }
 
-    // Đóng menu khi click ra ngoài
-    document.addEventListener('click', function(e) { 
-        if (!e.target.closest('.bell-wrapper')) document.getElementById('notif-box').style.display = 'none'; 
-        if (!e.target.closest('.menu-toggle') && !e.target.closest('.mobile-menu')) document.getElementById('mainMenu').classList.remove('active');
-    });
+        // Đóng popup khi click ngoài
+        document.addEventListener('click', function(e) { 
+            if (!e.target.closest('.bell-wrapper')) document.getElementById('notif-box').style.display = 'none'; 
+            if (!e.target.closest('.menu-toggle') && !e.target.closest('.mobile-menu')) document.getElementById('mainMenu').classList.remove('active');
+        });
 
-</script>
+    </script>
 </body>
-</html>
+    </html>
