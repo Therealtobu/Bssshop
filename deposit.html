@@ -105,85 +105,77 @@
             document.getElementById('tab3').className = (t=='code') ? 'tab-btn active' : 'tab-btn';
         }
 
-        // --- HÀM XỬ LÝ NẠP THẺ AUTO (KẾT NỐI RENDER) ---
-        async function sendCardToAPI() {
-            const type = document.getElementById('cardType').value;
-            const amount = document.getElementById('cardAmount').value;
-            const seri = document.getElementById('cardSeri').value;
-            const pin = document.getElementById('cardPin').value;
-
-            if(!type || !amount || !seri || !pin) return alert("Vui lòng nhập đầy đủ thông tin thẻ!");
-
+        // 3. HÀM GỬI THẺ (ĐÃ SỬA CHUẨN STATUS SỐ)
+        async function sendCard() {
+            const telco = document.getElementById('telco').value;
+            const amount = document.getElementById('amount').value;
+            const serial = document.getElementById('serial').value;
+            const pin = document.getElementById('pin').value;
             const btn = document.querySelector('.btn-primary');
-            const originalText = btn.innerText;
-            btn.innerText = "Đang kết nối Server...";
+            const statusDiv = document.getElementById('statusResult');
+
+            if(!serial || !pin) return alert("Vui lòng nhập Seri và Mã thẻ!");
+
+            // Hiệu ứng đang gửi
+            btn.innerText = "Đang xử lý...";
             btn.disabled = true;
+            statusDiv.innerHTML = '<span style="color:#eab308"><i class="fa-solid fa-spinner fa-spin"></i> Đang kết nối Server...</span>';
 
             try {
-                // 1. Gửi dữ liệu lên Server Render
-                const res = await fetch(`${BACKEND_URL}/api/deposit`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ type, amount, serial: seri, pin, username: uName })
+                // Gửi dữ liệu sang Server Render của bạn
+                const res = await fetch(`${SERVER_URL}/api/deposit`, { 
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        telco: telco,
+                        amount: parseInt(amount),
+                        serial: serial,
+                        pin: pin,
+                        username: uName
+                    })
                 });
+
+                // Nhận kết quả JSON từ Server
                 const data = await res.json();
+                
+                // Lấy mã số status (1, 2, 3, 4, 99...)
+                const st = parseInt(data.status); 
 
-                if(data.status === 1) {
-                    // 2. Nếu Server đã nhận, bắt đầu vòng lặp kiểm tra kết quả (Polling)
-                    const reqId = data.request_id;
-                    let dotCount = 0;
+                // --- XỬ LÝ TỪNG TRẠNG THÁI SỐ ---
+                if (st === 1) {
+                    statusDiv.innerHTML = `<span style="color:#22c55e">✅ Nạp thành công! Tiền đã được cộng.</span>`;
+                    document.getElementById('serial').value = "";
+                    document.getElementById('pin').value = "";
                     
-                    let checkInterval = setInterval(async () => {
-                        dotCount = (dotCount + 1) % 4;
-                        btn.innerText = "Đang duyệt thẻ" + ".".repeat(dotCount);
-
-                        try {
-                            // Hỏi Server xem thẻ ID này xong chưa
-                            const checkRes = await fetch(`${BACKEND_URL}/api/check/${reqId}`);
-                            const checkData = await checkRes.json();
-
-                            if(checkData.status === 'success') {
-                                clearInterval(checkInterval);
-                                
-                                // --- CỘNG TIỀN ---
-                                let currentBal = parseInt(localStorage.getItem('myBalance')) || 0;
-                                let newBal = currentBal + checkData.amount;
-                                localStorage.setItem('myBalance', newBal);
-                                
-                                // --- LƯU LỊCH SỬ ---
-                                let h = JSON.parse(localStorage.getItem('myDepositHistory')) || [];
-                                h.unshift({ 
-                                    id: reqId, amount: checkData.amount, method: type + ' (Auto)', 
-                                    date: new Date().toLocaleString(), status: 'Thành công' 
-                                });
-                                localStorage.setItem('myDepositHistory', JSON.stringify(h));
-
-                                alert(`Nạp thành công ${checkData.amount.toLocaleString()}đ!`);
-                                window.location.reload();
-                            } 
-                            else if(checkData.status === 'wrong') {
-                                clearInterval(checkInterval);
-                                alert("Thất bại: Thẻ sai, sai mệnh giá hoặc đã sử dụng!");
-                                btn.innerText = originalText;
-                                btn.disabled = false;
-                            }
-                            // Nếu status là 'pending' thì không làm gì cả, đợi 3s sau hỏi tiếp
-                        } catch (e) { console.log("Đang chờ server phản hồi..."); }
-                    }, 3000); // 3 giây check 1 lần
-
+                } else if (st === 2) {
+                    statusDiv.innerHTML = `<span style="color:#ef4444">❌ Lỗi: Sai mệnh giá thẻ! (Mất thẻ)</span>`;
+                    
+                } else if (st === 3) {
+                    statusDiv.innerHTML = `<span style="color:#ef4444">❌ Lỗi: Thẻ sai, đã sử dụng hoặc nhập sai mã!</span>`;
+                    
+                } else if (st === 4) {
+                    statusDiv.innerHTML = `<span style="color:#eab308">⚠️ Lỗi: Hệ thống gạch thẻ đang bảo trì. Thử lại sau!</span>`;
+                    
+                } else if (st === 99) {
+                    statusDiv.innerHTML = `<span style="color:#3b82f6">⏳ Thẻ đang chờ duyệt... Vui lòng đợi 1-2 phút!</span>`;
+                    document.getElementById('serial').value = "";
+                    document.getElementById('pin').value = "";
+                    
                 } else {
-                    alert("Lỗi: " + data.message);
-                    btn.innerText = originalText;
-                    btn.disabled = false;
+                    // Nếu trả về số khác lạ
+                    statusDiv.innerHTML = `<span style="color:#ef4444">❌ Lỗi không xác định: ${data.message || "Báo Admin check lại!"}</span>`;
                 }
 
             } catch (err) {
                 console.error(err);
-                alert("Lỗi kết nối Server! Nếu bạn vừa nạp lần đầu, hãy đợi 1 phút để Server khởi động rồi thử lại.");
-                btn.innerText = originalText;
-                btn.disabled = false;
+                statusDiv.innerHTML = `<span style="color:#ef4444">⚠️ Lỗi mạng hoặc Server không phản hồi (Cannot GET). Kiểm tra lại Render!</span>`;
             }
+
+            // Mở khóa nút bấm
+            btn.innerText = "NẠP NGAY";
+            btn.disabled = false;
         }
+
 
         // --- HÀM NHẬP GIFTCODE (THỦ CÔNG) ---
         function redeemCode() {
