@@ -22,8 +22,6 @@
             <h1 class="hero-title">Nâng Tầm <br>Trải Nghiệm <br>Bee Swarm</h1>
             <p class="hero-desc">Dịch vụ cung cấp Voucher, Vật phẩm Bee Swarm Simulator tự động. Bảo mật tuyệt đối, giá rẻ nhất thị trường.</p>
             <button onclick="handleMainBtn()" class="btn-hero"><span id="btn-text">Xem Dịch Vụ</span> <i class="fa-solid fa-arrow-right"></i></button>
-            <div class="floating-badge badge-1"><div class="fb-icon" style="background: #22c55e;"><i class="fa-solid fa-check"></i></div><div>Uy tín<br><span style="font-weight:400; color:#666; font-size:10px">Đã xác thực</span></div></div>
-            <div class="floating-badge badge-2"><div class="fb-icon" style="background: #3b82f6;"><i class="fa-solid fa-clock"></i></div><div>Tốc độ<br><span style="font-weight:400; color:#666; font-size:10px">Xử lý 5s</span></div></div>
         </div>
     </div>
 
@@ -32,7 +30,7 @@
         const menu = document.getElementById('mainMenu');
         if (isLog) {
             const user = localStorage.getItem('myUser');
-            menu.innerHTML = `<div style="padding:10px; font-size:12px; color:#888; border-bottom:1px solid #eee">Acc: <b>${user}</b></div><a href="index.html" class="menu-item">Trang chủ</a><a href="dashboard.html" class="menu-item">Cửa Hàng</a><a href="deposit.html" class="menu-item">Nạp Tiền</a><a href="history.html" class="menu-item">Lịch Sử Đơn</a><a href="#" onclick="logout()" class="menu-item logout">Đăng xuất</a>`;
+            menu.innerHTML = `<div style="padding:10px; font-size:12px; color:#888; border-bottom:1px solid #333">Acc: <b>${user}</b></div><a href="index.html" class="menu-item">Trang chủ</a><a href="dashboard.html" class="menu-item">Cửa Hàng</a><a href="deposit.html" class="menu-item">Nạp Tiền</a><a href="history.html" class="menu-item">Lịch Sử Đơn</a><a href="#" onclick="logout()" class="menu-item logout" style="color:#ef4444">Đăng xuất</a>`;
             document.getElementById('btn-text').innerText = "VÀO SHOP NGAY";
         } else {
             menu.innerHTML = `<a href="index.html" class="menu-item">Trang chủ</a><a href="login.html" class="menu-item">Đăng Nhập</a><a href="register.html" class="menu-item">Đăng Ký</a>`;
