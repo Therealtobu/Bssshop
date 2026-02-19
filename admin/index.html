@@ -3,109 +3,243 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - GENSAISHOP</title>
-    <link rel="stylesheet" href="../style.css">
+    <title>Admin Panel - GENSAI</title>
+    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        .admin-card { background: #000; color: #fff; padding: 20px; border-radius: 12px; margin-bottom: 20px; }
-        .order-card { background: white; padding: 10px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 10px; font-size: 13px; }
-        .badge-status { padding: 3px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; background: #eee; float: right; }
-        .btn-act { padding: 5px 10px; border: none; border-radius: 4px; color: white; font-weight: bold; cursor: pointer; font-size: 11px; margin-right: 5px; }
-        .img-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 3000; }
+        /* CSS RIÊNG CHO ADMIN ĐỂ KHẮC PHỤC LỖI HIỂN THỊ */
+        body { background: #050505; color: white; }
+        .admin-container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        
+        .admin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        
+        .col-box { background: #111; border: 1px solid #333; border-radius: 12px; padding: 15px; min-height: 400px; }
+        .col-header { font-weight: 800; text-transform: uppercase; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #333; color: #fff; display: flex; justify-content: space-between; }
+        
+        /* Thẻ đơn hàng */
+        .order-card { 
+            background: #1a1a1a; 
+            border: 1px solid #444; 
+            padding: 15px; 
+            border-radius: 8px; 
+            margin-bottom: 15px; 
+            position: relative;
+            transition: 0.2s;
+        }
+        .order-card:hover { border-color: #777; }
+        
+        .service-name { color: #22c55e; font-size: 15px; font-weight: 800; margin-bottom: 5px; text-transform: uppercase; }
+        .info-row { font-size: 13px; color: #ccc; margin-bottom: 4px; }
+        .highlight { color: #fff; font-weight: bold; }
+        .pass-text { color: #ef4444; font-weight: bold; }
+        
+        .note-box { background: #252525; padding: 8px; font-size: 12px; color: #aaa; font-style: italic; border-radius: 4px; margin: 8px 0; }
+        
+        /* Nút bấm */
+        .btn-group { display: flex; gap: 5px; margin-top: 10px; }
+        .btn-admin { flex: 1; padding: 8px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; color: white; font-size: 12px; }
+        .btn-img { background: #3b82f6; width: 100%; margin-top: 5px; padding: 6px; border:none; border-radius:4px; color:white; cursor:pointer; font-size:12px; }
+        .btn-done { background: #22c55e; }
+        .btn-cancel { background: #ef4444; }
+        .btn-price { background: #eab308; color: black; }
+
+        /* Input giá */
+        .price-input { width: 100%; padding: 8px; background: #333; border: 1px solid #555; color: white; border-radius: 4px; margin-bottom: 5px; }
+
+        /* Modal Xem Ảnh */
+        .img-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; justify-content: center; align-items: center; z-index: 3000; }
+        .img-view { max-width: 90%; max-height: 90%; border-radius: 8px; border: 2px solid #fff; }
+        .close-modal { position: absolute; top: 20px; right: 20px; color: white; font-size: 30px; cursor: pointer; }
     </style>
 </head>
 <body>
-    <script>if(prompt("Mật mã Admin:")!=="Gensai2026"){alert("Sai!");window.location.href="../index.html";}</script>
-    <nav class="navbar"><div class="container nav-inner"><div class="logo">GENSAI ADMIN</div><div class="menu-toggle" onclick="location.reload()"><i class="fa-solid fa-rotate-right"></i></div></div></nav>
-    
-    <div class="container">
+
+    <nav class="navbar" style="border-bottom: 1px solid #333; padding: 15px;">
+        <div class="container" style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="font-weight:900; color:white; font-size:20px;">ADMIN PANEL</div>
+            <button onclick="location.reload()" style="background:#333; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer;">Làm mới</button>
+        </div>
+    </nav>
+
+    <div class="admin-container">
         <div class="admin-grid">
             
-            <div class="admin-col" style="border-top: 4px solid #facc15;">
-                <div class="col-title" style="color:#b45309">1. Cần Báo Giá <span id="count-quote">0</span></div>
-                <div id="list-quote"></div>
+            <div class="col-box" style="border-top: 4px solid #eab308;">
+                <div class="col-header">
+                    <span style="color:#eab308">1. Cần Báo Giá</span>
+                    <span id="count-quote">0</span>
+                </div>
+                <div id="list-quote">Đang tải dữ liệu...</div>
             </div>
 
-            <div class="admin-col" style="border-top: 4px solid #22c55e;">
-                <div class="col-title" style="color:#15803d">2. Duyệt Gamepass <span id="count-gp">0</span></div>
+            <div class="col-box" style="border-top: 4px solid #22c55e;">
+                <div class="col-header">
+                    <span style="color:#22c55e">2. Duyệt Gamepass</span>
+                    <span id="count-gp">0</span>
+                </div>
                 <div id="list-gp"></div>
             </div>
 
-            <div class="admin-col" style="border-top: 4px solid #a855f7;">
-                <div class="col-title" style="color:#7e22ce">3. Cày Thuê Đang Làm <span id="count-boost">0</span></div>
+            <div class="col-box" style="border-top: 4px solid #a855f7;">
+                <div class="col-header">
+                    <span style="color:#a855f7">3. Đang Cày Thuê</span>
+                    <span id="count-boost">0</span>
+                </div>
                 <div id="list-boost"></div>
             </div>
 
         </div>
     </div>
 
-    <div id="imgModal" class="img-modal" onclick="this.style.display='none'">
-        <img id="viewImg" style="max-width:90%; max-height:90%; border-radius:10px;">
+    <div id="imgModal" class="img-modal">
+        <div class="close-modal" onclick="document.getElementById('imgModal').style.display='none'">&times;</div>
+        <img id="viewImg" class="img-view">
     </div>
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, onSnapshot, doc, updateDoc, orderBy, query } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
-    const firebaseConfig = {
-apiKey: "AIzaSyBpQ0poFExribJApkGp4poilyTfepmnj9E",  // <--- THAY CÁI CỦA BẠN VÀO ĐÂY
-        authDomain: "gensaishop-df392.firebaseapp.com",
-        projectId: "gensaishop-df392",
-        storageBucket: "gensaishop-df392.firebasestorage.app",
-        messagingSenderId: "561693794311",
-        appId: "1:561693794311:web:b1d78102189cc30ba44aa2"
-    };
+    <script>
+        // 1. CẤU HÌNH FIREBASE (Dùng đúng cái bạn gửi)
+        const firebaseConfig = {
+            apiKey: "AIzaSyBpQ0poFExribJApkGp4poilyTfepmnj9E",
+            authDomain: "gensaishop-df392.firebaseapp.com",
+            projectId: "gensaishop-df392",
+            storageBucket: "gensaishop-df392.firebasestorage.app",
+            messagingSenderId: "561693794311",
+            appId: "1:561693794311:web:b1d78102189cc30ba44aa2"
+        };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+        // Khởi động
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
 
-    // KIỂM TRA PASS ADMIN
-    if(prompt("Code:") !== "Gensai2026") window.location.href="../index.html";
+        // Kiểm tra mật khẩu Admin
+        if(prompt("Nhập mã Admin:") !== "Gensai2026") {
+            window.location.href = "index.html";
+        }
 
-    // --- LẮNG NGHE ĐƠN HÀNG REAL-TIME ---
-    // Lấy tất cả đơn, sắp xếp mới nhất lên đầu
-    const q = query(collection(db, "orders"), orderBy("createdAt", "desc"));
+        // 2. LẮNG NGHE DỮ LIỆU REAL-TIME
+        db.collection("orders").orderBy("createdAt", "desc").onSnapshot((snapshot) => {
+            const listQuote = document.getElementById('list-quote');
+            const listGp = document.getElementById('list-gp');
+            const listBoost = document.getElementById('list-boost');
 
-    onSnapshot(q, (snapshot) => {
-        const listQuote = document.getElementById('list-quote');
-        const listGp = document.getElementById('list-gp');
-        const listBoost = document.getElementById('list-boost');
+            listQuote.innerHTML = ''; 
+            listGp.innerHTML = ''; 
+            listBoost.innerHTML = '';
 
-        listQuote.innerHTML = ''; listGp.innerHTML = ''; listBoost.innerHTML = '';
+            let cQuote = 0, cGp = 0, cBoost = 0;
+
+            snapshot.forEach((doc) => {
+                const data = doc.data();
+                const id = doc.id;
+
+                // --- LOGIC HIỂN THỊ TỪNG LOẠI ĐƠN ---
+
+                // 1. ĐƠN CẦN BÁO GIÁ (Cày thuê & Trạng thái 'Đang xét giá')
+                if (data.type === 'boost' && data.status === 'Đang xét giá') {
+                    cQuote++;
+                    listQuote.innerHTML += `
+                        <div class="order-card">
+                            <div class="service-name">${data.service}</div>
+                            <div class="info-row">User: <span class="highlight">${data.acc}</span></div>
+                            <div class="info-row">Pass: <span class="pass-text">${data.pass}</span></div>
+                            
+                            ${data.note ? `<div class="note-box">📝 ${data.note}</div>` : ''}
+                            
+                            ${data.img ? `<button class="btn-img" onclick="viewImage('${id}')"><i class="fa-solid fa-image"></i> Xem Ảnh Acc</button>` : ''}
+                            <input type="hidden" id="img-${id}" value="${data.img}">
+
+                            <div style="margin-top:10px; border-top:1px solid #333; padding-top:10px">
+                                <input type="number" id="price-${id}" class="price-input" placeholder="Nhập giá tiền (VNĐ)...">
+                                <div class="btn-group">
+                                    <button class="btn-admin btn-price" onclick="sendPrice('${id}')">Gửi Báo Giá</button>
+                                    <button class="btn-admin btn-cancel" onclick="updateStatus('${id}', 'Hủy')">Hủy</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // 2. DUYỆT GAMEPASS (Gamepass & Chờ xử lý)
+                if (data.type === 'gamepass' && data.status === 'Chờ xử lý') {
+                    cGp++;
+                    listGp.innerHTML += `
+                        <div class="order-card">
+                            <div class="service-name" style="color:#22c55e">${data.service}</div>
+                            <div class="info-row">User: <span class="highlight">${data.acc}</span></div>
+                            <div class="info-row">Giá: <span class="pass-text">${parseInt(data.price).toLocaleString()}đ</span></div>
+                            
+                            <div class="btn-group">
+                                <button class="btn-admin btn-done" onclick="updateStatus('${id}', 'Thành công')">Đã xong</button>
+                                <button class="btn-admin btn-cancel" onclick="updateStatus('${id}', 'Hủy')">Hủy</button>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // 3. ĐANG CÀY (Boost & Đang xử lý)
+                if (data.type === 'boost' && data.status === 'Đang xử lý') {
+                    cBoost++;
+                    listBoost.innerHTML += `
+                        <div class="order-card" style="border-left: 3px solid #a855f7;">
+                            <div class="service-name" style="color:#a855f7">${data.service}</div>
+                            <div class="info-row">User: <span class="highlight">${data.acc}</span></div>
+                            <div class="info-row">Pass: <span class="pass-text">${data.pass}</span></div>
+                            <div class="info-row">Giá chốt: <span class="highlight">${parseInt(data.price).toLocaleString()}đ</span></div>
+                            ${data.note ? `<div class="note-box">📝 ${data.note}</div>` : ''}
+                            
+                             ${data.img ? `<button class="btn-img" onclick="viewImage('${id}')">Xem Ảnh Acc</button>` : ''}
+                             <input type="hidden" id="img-${id}" value="${data.img}">
+
+                            <div class="btn-group">
+                                <button class="btn-admin btn-done" onclick="updateStatus('${id}', 'Thành công')">Hoàn tất</button>
+                                <button class="btn-admin btn-cancel" onclick="updateStatus('${id}', 'Hủy')">Hủy</button>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            // Cập nhật số lượng
+            document.getElementById('count-quote').innerText = cQuote;
+            document.getElementById('count-gp').innerText = cGp;
+            document.getElementById('count-boost').innerText = cBoost;
+        });
+
+        // 3. CÁC HÀM XỬ LÝ
         
-        snapshot.forEach((docData) => {
-            const order = docData.data();
-            const id = docData.id; // ID của đơn hàng
+        // Gửi báo giá
+        function sendPrice(id) {
+            const price = document.getElementById(`price-${id}`).value;
+            if(!price) return alert("Vui lòng nhập giá tiền!");
+            
+            db.collection("orders").doc(id).update({
+                price: parseInt(price),
+                status: "Chờ xác nhận" // Chuyển trạng thái để khách nhận thông báo
+            }).then(() => {
+                alert("Đã gửi báo giá cho khách!");
+            });
+        }
 
-            // CODE HTML HIỂN THỊ (Giống hệt cũ, chỉ đổi cách gọi hàm update)
-            // Ví dụ phần Cày Thuê:
-            if(order.type === 'boost' && order.status === 'Đang xét giá') {
-                listQuote.innerHTML += `
-                    <div class="order-card">
-                        <b>${order.service}</b><br>
-                        User: ${order.acc} | Pass: ${order.pass}
-                        <input type="number" id="price-${id}" placeholder="Giá...">
-                        <button onclick="window.setPrice('${id}')">Gửi Báo Giá</button>
-                    </div>
-                `;
+        // Cập nhật trạng thái (Xong/Hủy)
+        function updateStatus(id, status) {
+            if(confirm("Xác nhận chuyển trạng thái thành: " + status + "?")) {
+                db.collection("orders").doc(id).update({
+                    status: status
+                });
             }
-            // ... (Làm tương tự cho các mục khác)
-        });
-    });
+        }
 
-    // --- HÀM CẬP NHẬT TRẠNG THÁI ---
-    window.setPrice = async function(id) {
-        const price = document.getElementById(`price-${id}`).value;
-        await updateDoc(doc(db, "orders", id), {
-            price: parseInt(price),
-            status: "Chờ xác nhận"
-        });
-        alert("Đã báo giá!"); // Bên khách sẽ tự nảy thông báo ngay
-    }
+        // Xem ảnh (Lấy từ input ẩn)
+        function viewImage(id) {
+            const imgBase64 = document.getElementById(`img-${id}`).value;
+            document.getElementById('viewImg').src = imgBase64;
+            document.getElementById('imgModal').style.display = 'flex';
+        }
 
-    window.updateStatus = async function(id, status) {
-        await updateDoc(doc(db, "orders", id), { status: status });
-    }
-</script>
+    </script>
 </body>
 </html>
